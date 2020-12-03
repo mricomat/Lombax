@@ -1,0 +1,24 @@
+{
+  "editor.codeActionsOnSave": {
+    "source.fixAll": true
+  },
+  "editor.formatOnSave": true,
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "editor.tabSize": 2,
+  "editor.wrappingIndent": "deepIndent",
+  "react-native.android.envFile.simulator": ".env.dev",
+  "react-native.android.envFile.device": ".env.dev",
+  "react-native.ios.envFile.simulator": ".env.dev",
+  "react-native.ios.envFile.device": ".env.dev"
+}
