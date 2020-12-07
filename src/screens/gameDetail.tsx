@@ -12,6 +12,7 @@ import { getImageUrl } from "src/utils/image";
 import PlayImg from "src/assets/icons/play_v.svg";
 import StartImg from "src/assets/icons/star";
 import GameDetailTab from "src/components/gameDetailTab";
+import EditButton from "src/components/buttons/edit";
 import { getGameById } from "src/services/games";
 
 const styles = StyleSheet.create({
@@ -131,6 +132,13 @@ const styles = StyleSheet.create({
     position: "absolute",
     alignSelf: "center",
     bottom: -12,
+  },
+  editButton: {
+    position: "absolute",
+    bottom: 0,
+    right: 0,
+    marginEnd: 22,
+    marginBottom: 30,
   },
 });
 
@@ -353,7 +361,7 @@ const GameDetail: React.FC<any> = ({ route }) => {
     return (
       <>
         {renderBackground()}
-        <Animated.View style={{ marginTop: marginTop }}>
+        <Animated.View style={{ marginTop: marginTop, paddingHorizontal: 22 }}>
           <Header title={"Game Detail"} onBackPress={() => navigation.goBack()} styleComponent={{ height: 80 }} />
         </Animated.View>
       </>
@@ -378,6 +386,7 @@ const GameDetail: React.FC<any> = ({ route }) => {
           )}
         </View>
       </ScrollView>
+      <EditButton styleComponent={styles.editButton} />
     </View>
   );
 };
