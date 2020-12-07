@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, View, Image, TouchableOpacity, Text, ScrollView, FlatList } from "react-native";
+import { StyleSheet, View, Image, TouchableOpacity, Text, ScrollView, FlatList, Animated } from "react-native";
 import moment from "moment";
-import lodash from "lodash";
-import LinearGradient from "react-native-linear-gradient";
 import useNavigation, { routeNames } from "src/hooks/use-navigation";
 
 import colors, { gradients } from "src/assets/colors";
@@ -20,7 +18,6 @@ const styles = StyleSheet.create({
   component: {
     backgroundColor: colors.grey80,
     flex: 1,
-    paddingTop: 40,
   },
   backgroundContainer: {
     height: DeviceUtils.deviceSize.height * 0.6,
@@ -40,7 +37,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     height: DeviceUtils.deviceSize.height * 0.6,
     width: "100%",
-    opacity: 0.7,
+    opacity: 0.5,
     borderBottomRightRadius: dimensions.radiusBig,
     borderBottomLeftRadius: dimensions.radiusBig,
   },
@@ -139,8 +136,23 @@ const styles = StyleSheet.create({
 
 const GameDetail: React.FC<any> = ({ route }) => {
   const [game, setGame] = useState<IGame>((route.params && route.params.game) || {});
+  //const [scrollY, setScrollY] = useState<any>(new Animated.Value(0));
   const [isLoading, setIsLoading] = useState<boolean>(route.params.isEmpty || false);
   const navigation = useNavigation();
+
+  const scrollY = new Animated.Value(0);
+
+  const marginTop = scrollY.interpolate({
+    inputRange: [0, 200],
+    outputRange: [20, 0],
+    extrapolate: "clamp",
+  });
+
+  const heightBack = scrollY.interpolate({
+    inputRange: [0, 200],
+    outputRange: [DeviceUtils.deviceSize.height * 0.6, 80],
+    extrapolate: "clamp",
+  });
 
   useEffect(() => {
     if (isLoading) {
@@ -157,10 +169,14 @@ const GameDetail: React.FC<any> = ({ route }) => {
   const renderBackground = () => {
     const uri = getImageUrl(game.screenshots && game.screenshots[0].image_id, "t_screenshot_big");
     return (
-      <View style={styles.backgroundContainer}>
-        <Image source={{ uri }} style={styles.imageBackground} resizeMode={"cover"} />
-        <View style={styles.backColor} />
-      </View>
+      <Animated.View style={[styles.backgroundContainer, { height: heightBack }]}>
+        <Animated.Image
+          source={{ uri }}
+          style={[styles.imageBackground, { height: heightBack }]}
+          resizeMode={"cover"}
+        />
+        <Animated.View style={[styles.backColor, { height: heightBack }]} />
+      </Animated.View>
     );
   };
 
@@ -333,12 +349,22 @@ const GameDetail: React.FC<any> = ({ route }) => {
     );
   };
 
+  const renderHeader = () => {
+    return (
+      <>
+        {renderBackground()}
+        <Animated.View style={{ marginTop: marginTop }}>
+          <Header title={"Game Detail"} onBackPress={() => navigation.goBack()} styleComponent={{ height: 80 }} />
+        </Animated.View>
+      </>
+    );
+  };
+
   return (
     <View style={styles.component}>
-      {renderBackground()}
-      <ScrollView>
+      {renderHeader()}
+      <ScrollView onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }])}>
         <View style={{ paddingHorizontal: 22, marginBottom: 20 }}>
-          <Header title={"Game Detail"} onBackPress={() => navigation.goBack()} />
           {!isLoading && (
             <>
               {renderCover()}
