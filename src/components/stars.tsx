@@ -6,7 +6,6 @@ import StarImg from "src/assets/icons/star";
 
 const styles = StyleSheet.create({
   container: {
-    justifyContent: "center",
     alignItems: "center",
     flexDirection: "row",
   },
@@ -14,16 +13,20 @@ const styles = StyleSheet.create({
 
 export interface IStars extends ViewProps {
   styleComponent?: StyleProp<ViewStyle>;
+  rating: number;
+  width?: number;
+  height?: number;
 }
 
-const StarsComponent: FC<IStars> = ({ styleComponent }) => {
+const StarsComponent: FC<IStars> = ({ styleComponent, rating, width, height }) => {
+  const fiveRating = (rating / 100) * 5;
   return (
     <View style={[styles.container, styleComponent]}>
-      <StarImg fill={colors.blue100} />
-      <StarImg fill={colors.blue100} />
-      <StarImg fill={colors.bluer70} />
-      <StarImg />
-      <StarImg />
+      <StarImg fill={fiveRating < 1 ? colors.grey65 : colors.blue100} width={width} height={height} />
+      <StarImg fill={fiveRating < 2 ? colors.grey65 : colors.bluer70} width={width} height={height} />
+      <StarImg fill={fiveRating < 3 ? colors.grey65 : colors.blue50} width={width} height={height} />
+      <StarImg fill={fiveRating < 4 ? colors.grey65 : colors.blue50} width={width} height={height} />
+      <StarImg fill={fiveRating < 5 ? colors.grey65 : colors.blue50} width={width} height={height} />
     </View>
   );
 };

@@ -39,10 +39,11 @@ const styles = StyleSheet.create({
 export interface IKeywords extends ViewProps {
   styleComponent?: StyleProp<ViewStyle>;
   words: IKeyword[];
+  lenght?: number;
 }
 
-const Keywords: FC<IKeywords> = ({ styleComponent, words = [] }) => {
-  const newWords = words.filter((item, index) => item.name.length < 14 && index < 4);
+const Keywords: FC<IKeywords> = ({ styleComponent, words = [], lenght = 14 }) => {
+  const newWords = words.filter((item, index) => item.name.length < lenght && index < 4);
   return (
     <View style={[styles.container, styleComponent]}>
       {newWords.map((item, index) => {

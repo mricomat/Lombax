@@ -11,7 +11,10 @@ export enum routeNames {
   HomeStack = "HomeStack",
   Feed = "Feed",
   GameDetail = "GameDetail",
+  ReviewDetail = "ReviewDetail",
   PlayerScreen = "PlayerScreen",
+  SearchScreen = "SearchScreen",
+  ReviewsScreen = "ReviewsScreen",
 }
 
 export enum modalNames {

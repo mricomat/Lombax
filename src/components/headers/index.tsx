@@ -47,9 +47,11 @@ export interface IHeader extends ViewProps {
   styleComponent?: StyleProp<ViewStyle>;
   title?: string;
   onBackPress?: () => void;
+  playIcon?: boolean;
+  heart?: boolean;
 }
 
-const MainHeader: FC<IHeader> = ({ styleComponent, onBackPress, title }) => {
+const MainHeader: FC<IHeader> = ({ styleComponent, onBackPress, title, playIcon = true, heart = true }) => {
   return (
     <View style={[styles.container, styleComponent]}>
       <TouchableOpacity style={styles.circleContainer} onPress={onBackPress}>
@@ -61,14 +63,18 @@ const MainHeader: FC<IHeader> = ({ styleComponent, onBackPress, title }) => {
       </View>
 
       <View style={{ flexDirection: "row" }}>
-        <TouchableOpacity style={[styles.circleContainer, { marginEnd: 5 }]}>
-          <View style={styles.circle} />
-          <GameImg />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.circleContainer}>
-          <View style={styles.circle} />
-          <HeartImg width={17} height={13} />
-        </TouchableOpacity>
+        {playIcon && (
+          <TouchableOpacity style={[styles.circleContainer, { marginEnd: 5 }]}>
+            <View style={styles.circle} />
+            <GameImg />
+          </TouchableOpacity>
+        )}
+        {heart && (
+          <TouchableOpacity style={styles.circleContainer}>
+            <View style={styles.circle} />
+            <HeartImg width={17} height={13} />
+          </TouchableOpacity>
+        )}
       </View>
     </View>
   );

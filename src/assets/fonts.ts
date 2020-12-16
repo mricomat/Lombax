@@ -23,6 +23,11 @@ export default StyleSheet.create({
     lineHeight: 22,
     fontFamily: fonts.robotoBold,
   },
+  bigTitle: {
+    fontSize: 35,
+    lineHeight: 40,
+    fontFamily: fonts.robotoBold,
+  },
   titleBold: {
     fontSize: 16,
     lineHeight: 18,
@@ -32,6 +37,11 @@ export default StyleSheet.create({
     fontSize: 14,
     lineHeight: 18,
     fontFamily: fonts.robotoMedium,
+  },
+  placeholder: {
+    fontSize: 14,
+    lineHeight: 18,
+    fontFamily: fonts.robotoBold,
   },
   genre: {
     fontFamily: fonts.robotoBold,

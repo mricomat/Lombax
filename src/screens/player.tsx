@@ -5,8 +5,9 @@ import YouTube from "react-native-youtube";
 import colors from "src/assets/colors";
 
 const styles = StyleSheet.create({
-  component: {
-    backgroundColor: colors.background,
+  container: {
+    flex: 1,
+    backgroundColor: colors.grey50,
   },
 });
 
@@ -14,7 +15,7 @@ const PlayerScreen = ({ route }) => {
   const idVideo = route.params.id;
   useEffect(() => {}, []);
   return (
-    <View style={{ flex: 1, backgroundColor: colors.grey50 }}>
+    <View style={styles.container}>
       <YouTube
         apiKey="AIzaSyAUSNAYreW6N5hrdyjEltRxUEWHdl-oBCM"
         videoId={idVideo}

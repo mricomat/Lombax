@@ -7,6 +7,7 @@ import { routeNames } from "src/hooks/use-navigation";
 import Home from "src/routes/home";
 import GameDetailScreen from "src/screens/gameDetail";
 import PlayerScreen from "src/screens/player";
+import ReviewDetailScreen from "src/screens/reviewDetail";
 
 // crash if go back from signup to root
 enableScreens();
@@ -27,6 +28,7 @@ const App = () => {
       <RootStack.Navigator>
         <RootStack.Screen name={routeNames.HomeStack} component={Home} options={DefaultOptions} />
         <RootStack.Screen name={routeNames.GameDetail} component={GameDetailScreen} options={DefaultOptions} />
+        <RootStack.Screen name={routeNames.ReviewDetail} component={ReviewDetailScreen} options={DefaultOptions} />
         <RootStack.Screen name={routeNames.PlayerScreen} component={PlayerScreen} options={DefaultOptions} />
       </RootStack.Navigator>
     </RootContext.Provider>
