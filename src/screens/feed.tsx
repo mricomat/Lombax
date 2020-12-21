@@ -103,9 +103,9 @@ const Feed: () => JSX.Element = () => {
     setMainGame(mainGamesResult.data[mainIndex]);
     mainGamesResult.data.splice(mainIndex, 1);
     setRecentGames(mainGamesResult.data);
-    RNBootSplash.hide({ fade: true });
     const topGamesRes = await getTopRated();
     setTopGames(topGamesRes.data);
+    RNBootSplash.hide({ fade: true });
   };
 
   const renderHeader = () => {

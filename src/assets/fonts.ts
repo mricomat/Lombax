@@ -28,6 +28,16 @@ export default StyleSheet.create({
     lineHeight: 40,
     fontFamily: fonts.robotoBold,
   },
+  midTitle: {
+    fontSize: 30,
+    lineHeight: 35,
+    fontFamily: fonts.robotoBold,
+  },
+  smallTitle: {
+    fontSize: 20,
+    lineHeight: 24,
+    fontFamily: fonts.robotoBold,
+  },
   titleBold: {
     fontSize: 16,
     lineHeight: 18,

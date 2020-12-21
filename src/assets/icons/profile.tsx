@@ -3,8 +3,8 @@ import Svg, { Path, SvgProps, Mask } from "react-native-svg";
 
 import colors from "../colors";
 
-const Profile: FC<SvgProps> = ({ fill = colors.white, style }) => (
-  <Svg style={style} width={21} height={20} viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+const Profile: FC<SvgProps> = ({ fill = colors.white, style, width = 21, height = 20 }) => (
+  <Svg style={style} width={width} height={height} viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
     <Path
       fillRule="evenodd"
       clipRule="evenodd"

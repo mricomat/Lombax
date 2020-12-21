@@ -1,4 +1,4 @@
-import deviceUtils from 'src/utils/device';
+import deviceUtils from "src/utils/device";
 
 export const dimensions = {
   margin: 22 * deviceUtils.deviceSizeScale,

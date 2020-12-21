@@ -15,6 +15,8 @@ export enum routeNames {
   PlayerScreen = "PlayerScreen",
   SearchScreen = "SearchScreen",
   ReviewsScreen = "ReviewsScreen",
+  NewReview = "NewReview",
+  LoginScreen = "LoginScreen",
 }
 
 export enum modalNames {

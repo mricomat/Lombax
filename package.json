@@ -70,6 +70,7 @@
     "react-native-svg": "^12.1.0",
     "react-native-swiper": "^1.6.0",
     "react-native-version-number": "^0.3.6",
+    "react-native-video": "^5.1.0-alpha8",
     "react-native-youtube": "^2.0.1",
     "styled-components": "^5.2.1"
   },

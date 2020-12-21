@@ -386,7 +386,10 @@ const GameDetail: React.FC<any> = ({ route }) => {
           )}
         </View>
       </ScrollView>
-      <EditButton styleComponent={styles.editButton} />
+      <EditButton
+        styleComponent={styles.editButton}
+        onPress={() => navigation.navigate(routeNames.NewReview, { game })}
+      />
     </View>
   );
 };
