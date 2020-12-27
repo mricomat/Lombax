@@ -1,11 +1,23 @@
 import React, { FC } from "react";
-import { Image, StyleProp, StyleSheet, TouchableOpacity, ViewProps, ViewStyle, View, Text } from "react-native";
+import {
+  Image,
+  StyleProp,
+  StyleSheet,
+  TouchableOpacity,
+  ViewProps,
+  ViewStyle,
+  View,
+  Text,
+  Animated,
+} from "react-native";
 
 import { colors, dimensions, fontStyle } from "src/assets";
 import { getImageUrl } from "src/utils/image";
 import HeartImg from "src/assets/icons/heart";
 import ArroLeftImg from "src/assets/icons/arrow_left.svg";
 import GameImg from "src/assets/icons/game.svg";
+import SettingsImg from "src/assets/icons/settings.svg";
+import AlertImg from "src/assets/icons/alert.svg";
 import { ICover } from "src/types/api";
 
 const styles = StyleSheet.create({
@@ -51,13 +63,28 @@ export interface IHeader extends ViewProps {
   heart?: boolean;
 }
 
-const MainHeader: FC<IHeader> = ({ styleComponent, onBackPress, title, playIcon = true, heart = true }) => {
+const MainHeader: FC<IHeader> = ({
+  styleComponent,
+  onBackPress,
+  title,
+  playIcon = true,
+  heart = true,
+  profile = false,
+}) => {
   return (
-    <View style={[styles.container, styleComponent]}>
-      <TouchableOpacity style={styles.circleContainer} onPress={onBackPress}>
-        <View style={styles.circle} />
-        <ArroLeftImg />
-      </TouchableOpacity>
+    <Animated.View style={[styles.container, styleComponent]}>
+      {profile && (
+        <TouchableOpacity style={styles.circleContainer}>
+          <View style={styles.circle} />
+          <SettingsImg width={18} height={14} />
+        </TouchableOpacity>
+      )}
+      {!profile && (
+        <TouchableOpacity style={styles.circleContainer} onPress={onBackPress}>
+          <View style={styles.circle} />
+          <ArroLeftImg />
+        </TouchableOpacity>
+      )}
       <View style={styles.titleContainer}>
         <Text style={styles.title}>{title}</Text>
       </View>
@@ -75,8 +102,14 @@ const MainHeader: FC<IHeader> = ({ styleComponent, onBackPress, title, playIcon 
             <HeartImg width={17} height={13} />
           </TouchableOpacity>
         )}
+        {profile && (
+          <TouchableOpacity style={styles.circleContainer}>
+            <View style={styles.circle} />
+            <AlertImg width={20} height={16} />
+          </TouchableOpacity>
+        )}
       </View>
-    </View>
+    </Animated.View>
   );
 };
 

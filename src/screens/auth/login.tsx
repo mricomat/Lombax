@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View, Image, Text, ScrollView, KeyboardAvoidingView, TouchableOpacity } from "react-native";
 import Video from "react-native-video";
+import useNavigation, { routeNames } from "src/hooks/use-navigation";
 
 import { colors, dimensions, fontStyle } from "src/assets";
 import Input from "src/components/inputs/simple";
@@ -68,11 +69,18 @@ const styles = StyleSheet.create({
     height: 32,
     position: "absolute",
   },
+  icon: {
+    position: "absolute",
+    marginStart: 16,
+    alignSelf: "flex-start",
+    top: 17,
+  },
 });
 
 const LoginScreen: () => JSX.Element = () => {
   const [value, setValue] = useState("");
   const [showVideo, setShowVideo] = useState(true);
+  const navigation = useNavigation();
 
   const renderBackgroundImage = () => {
     return (
@@ -118,8 +126,13 @@ const LoginScreen: () => JSX.Element = () => {
   const renderButtons = () => {
     return (
       <View style={{ width: "100%", marginTop: 50, marginBottom: 30 }}>
-        <Button title={"Sign in"} onPress={() => {}} />
-        <Button title={"Register"} style={{ marginTop: 10 }} backgroundColor={colors.grey50} onPress={() => {}} />
+        <Button title={"Sign in"} onPress={() => navigation.navigate(routeNames.ProfileScreen)} />
+        <Button
+          title={"Register"}
+          style={{ marginTop: 10 }}
+          backgroundColor={colors.grey50}
+          onPress={() => navigation.navigate(routeNames.RegisterScreen)}
+        />
         <TouchableOpacity style={{ marginTop: 12 }}>
           <Text style={styles.forgotTitle}>Forgot password?</Text>
         </TouchableOpacity>
@@ -139,26 +152,14 @@ const LoginScreen: () => JSX.Element = () => {
               placeholder={"Username or Email"}
               value={value}
               onChangeText={text => setValue(text)}
-              LeftIcon={() => (
-                <ProfileImg
-                  width={15}
-                  height={16}
-                  style={{ position: "absolute", marginStart: 16, alignSelf: "flex-start", top: 17 }}
-                />
-              )}
+              LeftIcon={() => <ProfileImg width={15} height={16} style={styles.icon} />}
             />
             <Input
               placeholder={"Password"}
               styleContent={{ marginTop: 10 }}
               value={value}
               onChangeText={text => setValue(text)}
-              LeftIcon={() => (
-                <LockImg
-                  width={14}
-                  height={16}
-                  style={{ position: "absolute", marginStart: 16, alignSelf: "flex-start", top: 17 }}
-                />
-              )}
+              LeftIcon={() => <LockImg width={14} height={16} style={styles.icon} />}
             />
           </View>
           {renderButtons()}

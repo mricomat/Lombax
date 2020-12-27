@@ -35,8 +35,7 @@ const InterestList: FC<IInteresList> = ({ styleComponent, title, data, onPressIt
   };
   return (
     <View style={[styles.container, styleComponent]}>
-      <Text style={styles.title}>{title}</Text>
-
+      {title && <Text style={styles.title}>{title}</Text>}
       <View style={{ flex: 1 }}>
         <FlatList
           data={data}

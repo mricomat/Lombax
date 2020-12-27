@@ -88,7 +88,7 @@ const ReviewsScreen = ({}) => {
 
   const scaleTitle = scrollY.interpolate({
     inputRange: [0, 200],
-    outputRange: [1, 0.56],
+    outputRange: [1, 0.48],
     extrapolate: "clamp",
   });
 
@@ -181,7 +181,7 @@ const ReviewsScreen = ({}) => {
             backgroundColor: colors.grey50,
             width: "100%",
             height: heightBack,
-            opacity: 0.75,
+            opacity: 0.65,
             borderBottomEndRadius: 15,
             borderBottomLeftRadius: 15,
           }}
