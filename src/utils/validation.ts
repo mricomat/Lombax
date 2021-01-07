@@ -1,12 +1,20 @@
-import { isEmail, isPhoneNumber } from 'class-validator';
+import { IsNotEmpty, Matches } from "class-validator";
 
 // import { regexPatterns } from './text';
 // import { up18, tomorrow } from './time';
 
-/* eslint max-classes-per-file: 0 */
+const EMAIL_REGEX = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))|^$/;
 
-export const isValidPhone = (number: string, region = 'ZZ') => isPhoneNumber(number, region);
-export const isValidEmail = (mail: string, options?: any) => isEmail(mail, options);
+// export const isValidPhone = (number: string, region = "ZZ") => isPhoneNumber(number, region);
+// export const isValidEmail = (mail: string, options?: any) => isEmail(mail, options);
+
+export class LogInValidation {
+  @IsNotEmpty()
+  @Matches(EMAIL_REGEX)
+  public email: string;
+  @IsNotEmpty()
+  public password: string;
+}
 
 // export const isValidPhone = (number: string, region = 'ZZ') => validator.isPhoneNumber(number, region);
 

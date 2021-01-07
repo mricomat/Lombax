@@ -39,7 +39,7 @@
   },
   "dependencies": {
     "@ptomasroos/react-native-multi-slider": "^2.2.2",
-    "@react-native-community/async-storage": "^2.0.0-rc.0",
+    "@react-native-async-storage/async-storage": "^1.13.2",
     "@react-native-community/checkbox": "^0.5.6",
     "@react-native-community/hooks": "^2.6.0",
     "@react-native-community/masked-view": "^0.1.10",
@@ -88,6 +88,7 @@
     "@types/node": "^14.14.10",
     "@types/react": "^17.0.0",
     "@types/react-native": "^0.63.37",
+    "@types/react-native-video": "^5.0.3",
     "@types/react-test-renderer": "^17.0.0",
     "@typescript-eslint/eslint-plugin": "^4.8.2",
     "@typescript-eslint/parser": "^4.8.2",

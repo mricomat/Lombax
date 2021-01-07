@@ -10,6 +10,11 @@ import ProfileImg from "src/assets/icons/profile";
 import LockImg from "src/assets/icons/lock.svg";
 import VideoImg from "src/assets/icons/video.svg";
 import NoVideoImg from "src/assets/icons/no_video.svg";
+import { useForm } from "src/hooks/use-form";
+import { defLogin } from "src/utils/defForm";
+import { LogInValidation } from "src/utils/validation";
+import { logIn } from "src/services/auth";
+import useRootContext from "src/hooks/use-context";
 
 const styles = StyleSheet.create({
   container: {
@@ -75,12 +80,37 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
     top: 17,
   },
+  buttonContainer: {
+    width: "100%",
+    marginTop: 50,
+    marginBottom: 30,
+  },
 });
 
 const LoginScreen: () => JSX.Element = () => {
-  const [value, setValue] = useState("");
+  const {
+    langState: [lang],
+    user: [user, setUser],
+  } = useRootContext();
   const [showVideo, setShowVideo] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+
   const navigation = useNavigation();
+
+  const { values, errors, setErrors, messages, setMessages, updateForm, onSubmitForm } = useForm(
+    defLogin,
+    LogInValidation,
+    async () => {
+      const { error, data } = await logIn(values);
+      if (error) {
+        setErrors({ email: true, password: true });
+        setMessages({ password: data.message, email: data.message });
+      }
+      setUser(data.user);
+      navigation.navigate(routeNames.ProfileScreen);
+      setIsLoading(false);
+    }
+  );
 
   const renderBackgroundImage = () => {
     return (
@@ -125,8 +155,16 @@ const LoginScreen: () => JSX.Element = () => {
 
   const renderButtons = () => {
     return (
-      <View style={{ width: "100%", marginTop: 50, marginBottom: 30 }}>
-        <Button title={"Sign in"} onPress={() => navigation.navigate(routeNames.ProfileScreen)} />
+      <View style={styles.buttonContainer}>
+        <Button
+          title={"Sign in"}
+          onPress={() => {
+            setIsLoading(true);
+            onSubmitForm();
+          }}
+          disabled={isLoading}
+          loading={isLoading}
+        />
         <Button
           title={"Register"}
           style={{ marginTop: 10 }}
@@ -150,15 +188,28 @@ const LoginScreen: () => JSX.Element = () => {
           <View style={{ width: "100%", marginTop: 30 }}>
             <Input
               placeholder={"Username or Email"}
-              value={value}
-              onChangeText={text => setValue(text)}
+              value={values.email}
+              onChangeText={email => updateForm({ email })}
+              isError={errors.email}
+              onFocus={() => {
+                errors.email = false;
+                setErrors(errors);
+              }}
+              errorText={messages.email}
               LeftIcon={() => <ProfileImg width={15} height={16} style={styles.icon} />}
             />
             <Input
               placeholder={"Password"}
               styleContent={{ marginTop: 10 }}
-              value={value}
-              onChangeText={text => setValue(text)}
+              value={values.password}
+              isError={errors.password}
+              secureTextEntry={true}
+              onFocus={() => {
+                errors.password = false;
+                setErrors(errors);
+              }}
+              errorText={messages.password}
+              onChangeText={password => updateForm({ password })}
               LeftIcon={() => <LockImg width={14} height={16} style={styles.icon} />}
             />
           </View>

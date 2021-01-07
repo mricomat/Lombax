@@ -13,6 +13,8 @@ const Config = {
   isStage: RNConfig.ENV === "STAGE",
   isPro: RNConfig.ENV === "PRODUCTION",
   apiUrl: `https://api.igdb.com/v4`,
+  lombUrl: `https://pacific-brook-91016.herokuapp.com/api`,
+  avatarUrl: `https://pacific-brook-91016.herokuapp.com/api/images`,
   tokenUrl: `https://id.twitch.tv/oauth2/token`,
   imageUrl: `https://images.igdb.com/igdb/image/upload`,
   clientId: "wlakph670srij9zlzw1lnyan72c3ft",

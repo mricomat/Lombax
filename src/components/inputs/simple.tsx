@@ -52,12 +52,12 @@ const styles = StyleSheet.create({
     marginBottom: -8,
     zIndex: 2,
   },
-  // error: {
-  //   ...fontStyle.error,
-  //   color: colors.red100,
-  //   marginTop: 4,
-  //   marginStart: 1,
-  // },
+  error: {
+    marginStart: 16,
+    marginTop: 2,
+    ...fontStyle.menuLabel,
+    color: colors.red100,
+  },
   sufix: {
     flexDirection: "column-reverse",
   },
@@ -91,6 +91,8 @@ export interface IInputProps extends TextInputProperties {
   onPressCalendar?: () => void;
   secureTextEntry?: boolean;
   isDescription?: boolean;
+  LeftIcon?: any;
+  RightIcon?: any;
 }
 
 const AnimatedInput: FC<IInputProps> = ({
@@ -156,7 +158,9 @@ const AnimatedInput: FC<IInputProps> = ({
     let borderStyle = {};
     if (showError) {
       borderStyle = {
-        borderColor: errorColor || colors.red100,
+        borderColor: colors.red100,
+        borderWidth: 0.6,
+        backgroundColor: colors.red10,
       };
     }
     return borderStyle;
@@ -164,11 +168,11 @@ const AnimatedInput: FC<IInputProps> = ({
 
   const labelColor = () => {
     let labelStyle = {};
-    if (showError) {
-      labelStyle = {
-        color: errorColor || colors.red100,
-      };
-    }
+    // if (showError) {
+    //   labelStyle = {
+    //     color: errorColor || colors.red100,
+    //   };
+    // }
     return labelStyle;
   };
 
@@ -309,6 +313,7 @@ const AnimatedInput: FC<IInputProps> = ({
           </TouchableOpacity>
         )} */}
       </TouchableOpacity>
+      {isError && <Text style={styles.error}>{errorText}</Text>}
     </View>
   );
 };

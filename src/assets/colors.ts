@@ -15,7 +15,9 @@ export enum colors {
 
   brown20 = "#242424",
 
+  red100 = "#B11818",
   red70 = "#AD2507",
+  red10 = "#372424",
 
   black = "#000000",
   disabled = "#C4C4C4",

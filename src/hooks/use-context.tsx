@@ -1,7 +1,7 @@
-import React, { useContext } from 'react';
+import React, { useContext } from "react";
 
-// import {IGlobalContextType} from 'src/types/context';
-type IGlobalContextType = any;
+import { IGlobalContextType } from "src/types/context";
+
 const defContextInterface = {} as IGlobalContextType;
 
 // {Provider, Consumer}

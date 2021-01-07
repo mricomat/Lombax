@@ -8,8 +8,9 @@ import AvatarItem from "src/components/items/avatarItem";
 import useNavigation from "src/hooks/use-navigation";
 import { getMainGame } from "src/services/games";
 import IGame from "src/types/api";
-import { getImageUrl } from "src/utils/image";
+import { getImageUrl, getCoverUrl } from "src/utils/image";
 import DeviceUtils from "src/utils/device";
+import useRootContext from "src/hooks/use-context";
 
 const styles = StyleSheet.create({
   container: {
@@ -74,6 +75,11 @@ const styles = StyleSheet.create({
 });
 
 const ProfileScreen: () => JSX.Element = () => {
+  const {
+    langState: [lang],
+    user: [user],
+  } = useRootContext();
+
   const [recentGames, setRecentGames] = useState<IGame[]>([]);
   const scrollY = new Animated.Value(0);
   const navigation = useNavigation();
@@ -109,7 +115,7 @@ const ProfileScreen: () => JSX.Element = () => {
     return (
       <View style={{ position: "absolute", width: "100%", height: "100%" }}>
         <Animated.Image
-          source={require("src/assets/images/backhollow.png")}
+          source={{ uri: getCoverUrl(user.backgroundId) }}
           resizeMode={"cover"}
           style={[styles.image, { height: heightBack }]}
         />
@@ -121,13 +127,14 @@ const ProfileScreen: () => JSX.Element = () => {
   const renderTopInfo = () => {
     return (
       <View style={{ alignItems: "center" }}>
-        <Text style={styles.username}>mrico</Text>
-        <AvatarItem styleComponent={{ marginTop: 14 }} />
+        <Text style={styles.username}>{user.username}</Text>
+        <AvatarItem styleComponent={{ marginTop: 14 }} data={user.coverId} />
         <Text style={[styles.username, { marginTop: 12 }]}>Interested in</Text>
-        <Text style={styles.interests}>{"Action  Shooter  Platforms"}</Text>
+        <Text
+          style={styles.interests}
+        >{`${user.interests[0].name}  ${user.interests[1].name}  ${user.interests[2].name}`}</Text>
         <Text style={styles.description} numberOfLines={2}>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-          magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+          {user.summary}
         </Text>
       </View>
     );
@@ -138,19 +145,19 @@ const ProfileScreen: () => JSX.Element = () => {
       <View style={styles.infoBar}>
         <TouchableOpacity style={{ alignItems: "center", padding: 5, borderRadius: 15 }}>
           <Text style={styles.titleTab}>Reviews</Text>
-          <Text style={styles.numberTab}>47</Text>
+          <Text style={styles.numberTab}>{user.reviews.length}</Text>
         </TouchableOpacity>
         <TouchableOpacity style={{ alignItems: "center", padding: 5, borderRadius: 15 }}>
           <Text style={styles.titleTab}>Games</Text>
-          <Text style={styles.numberTab}>15</Text>
+          <Text style={styles.numberTab}>{15}</Text>
         </TouchableOpacity>
         <TouchableOpacity style={{ alignItems: "center", padding: 5, borderRadius: 15 }}>
           <Text style={styles.titleTab}>Following</Text>
-          <Text style={styles.numberTab}>32</Text>
+          <Text style={styles.numberTab}>{user.following.length}</Text>
         </TouchableOpacity>
         <TouchableOpacity style={{ alignItems: "center", padding: 5, borderRadius: 15 }}>
           <Text style={styles.titleTab}>Followers</Text>
-          <Text style={styles.numberTab}>17</Text>
+          <Text style={styles.numberTab}>{user.followers.length}</Text>
         </TouchableOpacity>
       </View>
     );
@@ -193,7 +200,7 @@ const ProfileScreen: () => JSX.Element = () => {
       {renderBackground()}
       <Animated.View style={{ marginTop: marginTop, paddingHorizontal: 14 }}>
         <Header
-          title={"Martín Rico"}
+          title={user.name}
           playIcon={false}
           heart={false}
           styleComponent={{ height: heightHeader }}

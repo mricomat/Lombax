@@ -1,6 +1,6 @@
 import moment from "moment";
 
-import { post } from "src/services/fetch";
+import { post } from "src/services/fetchGames";
 
 const gameFields = `id, rating, name, total_rating, cover.image_id, keywords.name, summary, 
 first_release_date,release_dates.date, screenshots.image_id, artworks.image_id, involved_companies.company.name, involved_companies.publisher,involved_companies.supporting, involved_companies.porting,

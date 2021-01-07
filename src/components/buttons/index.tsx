@@ -52,6 +52,7 @@ const SimpleButton: FC<IProps> = props => {
     backgroundColor = colors.blue100,
     color = colors.white,
     inactive = false,
+    disabled = false,
     loading = false,
     Icon,
   } = props;
@@ -68,7 +69,7 @@ const SimpleButton: FC<IProps> = props => {
   return (
     <TouchableOpacity
       style={[styles.button, { backgroundColor }, { ...style }, inactive && styles.inactive]}
-      disabled={inactive}
+      disabled={disabled || inactive}
       onPress={() => {
         !loading && Keyboard.dismiss();
         !loading && onPress();

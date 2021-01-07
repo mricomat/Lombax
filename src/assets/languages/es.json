@@ -1,0 +1,15 @@
+{
+  "isNotEmpty": "El campo no puede estar vacío",
+  "IsNotBlank": "El campo no puede estar vacío",
+  "IsString": "El campo solo puede texto válido",
+  "IsAlpha": "El campo solo puede contener letras",
+  "IsNumberString": "El campo debe ser un número",
+  "IsBoolean": "El campo debe estar seleccionado",
+  "MaxDate": "La fecha no puede ser futura",
+  "Matches": "El campo no es válido",
+  "IsDateString": "La fecha no es válida",
+  "IsAlphanumeric": "El campo solo puede contener letras y números",
+  "IsDocNumberRepeated": "El documento está repetido en otro asegurado",
+  "isAlphaBlank": "El campo solo puede contener letras",
+  "Length": "El post no puede superar el número máximo de letras"
+}

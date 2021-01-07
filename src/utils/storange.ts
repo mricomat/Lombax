@@ -16,7 +16,7 @@ type ICallbackError = (error?: Error, result?: string) => void;
 enum keys {
   token = "TOKEN",
   // userId = 'USER_ID',
-  // context = 'CONTEXT', // to persist, delete on open app
+  context = "CONTEXT", // to persist, delete on open app
   // rememberUser = 'REMEMBERUSER',
   // rememberFaceTouch = 'REMEMBERFACETOUCH',
   // hasLogged = 'HASLOGGED',
