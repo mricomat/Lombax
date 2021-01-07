@@ -10,6 +10,7 @@ import PlayerScreen from "src/screens/player";
 import ReviewDetailScreen from "src/screens/reviews/reviewDetail";
 import NewReviewScreen from "src/screens/reviews/newReview";
 import RegisterScreen from "src/screens/auth/register";
+import MosaicScreen from "src/screens/mosaic";
 
 // crash if go back from signup to root
 enableScreens();
@@ -30,6 +31,7 @@ const App = () => {
       <RootStack.Navigator>
         <RootStack.Screen name={routeNames.HomeStack} component={Home} options={DefaultOptions} />
         <RootStack.Screen name={routeNames.GameDetail} component={GameDetailScreen} options={DefaultOptions} />
+        <RootStack.Screen name={routeNames.MosaicScreen} component={MosaicScreen} options={DefaultOptions} />
         <RootStack.Screen name={routeNames.ReviewDetail} component={ReviewDetailScreen} options={DefaultOptions} />
         <RootStack.Screen name={routeNames.NewReview} component={NewReviewScreen} options={DefaultOptions} />
         <RootStack.Screen name={routeNames.PlayerScreen} component={PlayerScreen} options={DefaultOptions} />

@@ -1,10 +1,11 @@
 import React, { FC } from "react";
-import { FlatList, StyleProp, StyleSheet, Text, View, ViewProps, ViewStyle } from "react-native";
+import { FlatList, StyleProp, StyleSheet, Text, View, ViewProps, ViewStyle, TouchableOpacity } from "react-native";
 
 import { colors, fontStyle } from "src/assets";
 import GameItem from "src/components/items/gameItem";
 import IGame from "src/types/api";
 import useNavigation, { routeNames } from "src/hooks/use-navigation";
+import RoudedPlusImg from "src/assets/icons/rounded_plus.svg";
 
 const styles = StyleSheet.create({
   container: {
@@ -41,8 +42,24 @@ const GameList: FC<IGameList> = ({ styleComponent, games = [], title }) => {
 
   return (
     <View style={[styles.container, styleComponent]}>
-      {title && <Text style={styles.title}>{title}</Text>}
-      <FlatList data={games} renderItem={renderItem} horizontal contentContainerStyle={{ marginStart: 20 }} />
+      {title && (
+        <View style={{ flexDirection: "row" }}>
+          <Text style={styles.title}>{title}</Text>
+          <TouchableOpacity
+            style={{ marginStart: 10 }}
+            onPress={() => navigation.navigate(routeNames.MosaicScreen, { games })}
+          >
+            <RoudedPlusImg />
+          </TouchableOpacity>
+        </View>
+      )}
+      <FlatList
+        data={games}
+        renderItem={renderItem}
+        horizontal
+        contentContainerStyle={{ marginStart: 20 }}
+        showsHorizontalScrollIndicator={false}
+      />
     </View>
   );
 };

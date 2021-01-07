@@ -1,5 +1,5 @@
 import React from "react";
-import { View, TouchableOpacity, StyleSheet, Text } from "react-native";
+import { View, TouchableOpacity, StyleSheet, Text, Animated } from "react-native";
 import { useSafeArea } from "react-native-safe-area-context";
 
 import { colors, fontStyle } from "src/assets";
@@ -47,35 +47,48 @@ const styles = StyleSheet.create({
   },
 });
 
-const renderIcon = (label: string, isFocused: boolean, onPress) => {
-  switch (label) {
-    case "Soon":
-      return <SoonIcon fill={isFocused ? colors.bluer70 : colors.white} />;
-    case "Search":
-      return <SearchIcon fill={isFocused ? colors.bluer70 : colors.white} />;
-    case "Feed":
-      return isFocused ? (
-        <View style={styles.logoContainer}>
-          <TouchableOpacity onPress={onPress}>
-            <FeedIcon style={{ transform: [{ scale: 0.9 }], marginTop: 6 }} />
-          </TouchableOpacity>
-        </View>
-      ) : (
-        <TouchableOpacity style={[styles.logoContainer, { height: 70, width: 70 }]}>
-          <TouchableOpacity onPress={onPress}>
-            <FeedWhiteIcon style={{ transform: [{ scale: 0.75 }], marginTop: 8 }} />
-          </TouchableOpacity>
-        </TouchableOpacity>
-      );
-    case "Reviews":
-      return <ReviewsIcon fill={isFocused ? colors.bluer70 : colors.white} />;
-    case "Profile":
-      return <ProfileIcon fill={isFocused ? colors.bluer70 : colors.white} />;
-  }
-};
+const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
 
 const MainTab = ({ state, descriptors, navigation }) => {
   const safeAreaInsets = useSafeArea();
+
+  const scaleFeddIcon = new Animated.Value(1);
+
+  const renderIcon = (label: string, isFocused: boolean, onPress) => {
+    if (label == "Feed") {
+      Animated.timing(scaleFeddIcon, {
+        toValue: isFocused ? 1.05 : 1,
+        duration: 200,
+        useNativeDriver: true,
+      }).start();
+    }
+    switch (label) {
+      case "Soon":
+        return <SoonIcon fill={isFocused ? colors.bluer70 : colors.white} />;
+      case "Search":
+        return <SearchIcon fill={isFocused ? colors.bluer70 : colors.white} />;
+      case "Feed":
+        return (
+          <AnimatedTouchable style={[styles.logoContainer, { transform: [{ scale: scaleFeddIcon }] }]}>
+            <TouchableOpacity
+              onPress={() => {
+                onPress();
+              }}
+            >
+              {isFocused ? (
+                <FeedIcon style={{ transform: [{ scale: 0.9 }], marginTop: 6 }} />
+              ) : (
+                <FeedWhiteIcon style={{ transform: [{ scale: 0.75 }], marginTop: 8 }} />
+              )}
+            </TouchableOpacity>
+          </AnimatedTouchable>
+        );
+      case "Reviews":
+        return <ReviewsIcon fill={isFocused ? colors.bluer70 : colors.white} />;
+      case "Profile":
+        return <ProfileIcon fill={isFocused ? colors.bluer70 : colors.white} />;
+    }
+  };
 
   return (
     <>

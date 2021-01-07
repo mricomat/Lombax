@@ -92,16 +92,16 @@ const GameDetailTab: FC<IGameTab> = ({ styleComponent, game }) => {
   };
 
   const renderCoverGame = ({ item, index }) => {
-    const width = (DeviceUtils.deviceSize.width - 74) / 3;
-    const height = DeviceUtils.deviceSize.height * 0.23;
+    const width = (DeviceUtils.deviceSize.width - 65) / 3;
+    const height = DeviceUtils.deviceSize.height * 0.24;
     return (
       <GameItem
         cover={item.cover}
-        styleComponent={{ marginTop: 15 }}
+        styleComponent={{ marginTop: 10 }}
         key={item.id + index}
         styleImage={{ height, width }}
         activity={false}
-        onPress={() => navigation.navigate(routeNames.GameDetail, { game: item, isEmpty: true }, game.id)}
+        onPress={() => navigation.navigate(routeNames.GameDetail, { game: item, isEmpty: true }, item.id)}
       />
     );
   };

@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, View, Image, TouchableOpacity, Text, ScrollView, FlatList } from "react-native";
+import { StyleSheet, View, Image, TouchableOpacity, Text, ScrollView, FlatList, Animated } from "react-native";
 import lodash from "lodash";
 import LinearGradient from "react-native-linear-gradient";
 import RNBootSplash from "react-native-bootsplash";
+import SkeletonContent from "react-native-skeleton-content-nonexpo";
 
 import colors, { gradients } from "src/assets/colors";
 import { fontStyle } from "src/assets";

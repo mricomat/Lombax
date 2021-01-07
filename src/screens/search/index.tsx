@@ -18,13 +18,13 @@ import { PacmanIndicator } from "react-native-indicators";
 import ResultSearch from "src/screens/search/resultSearch";
 import IGame from "src/types/api";
 import DeviceUtils from "src/utils/device";
+import FiltersModal from "src/components/modals/filtersModal";
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.grey80,
   },
-
   title: {
     alignSelf: "center",
     color: colors.white,
@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 20,
+    marginTop: 10,
   },
   linearGradient: {
     height: 30,
@@ -90,23 +90,27 @@ const SearchScreen = ({}) => {
   const [hasSearch, setHasSearch] = useState<boolean>(false);
   const [searchResult, setSearchResult] = useState<IGame[]>([]);
   const [highResult, setHighResult] = useState<IGame[]>([]);
+  const [showModal, setShowModal] = useState<boolean>(false);
 
   const scrollY = useRef(new Animated.Value(0)).current;
   const scrollView = React.createRef();
 
   const marginTop = scrollY.interpolate({
-    inputRange: [0, 100],
-    outputRange: [0, -42],
+    inputRange: [0, 200],
+    outputRange: [0, -90],
+    extrapolate: "clamp",
   });
 
   const marginTitleTop = scrollY.interpolate({
     inputRange: [0, 200],
     outputRange: [0, -10],
+    extrapolate: "clamp",
   });
 
   const scaleTitle = scrollY.interpolate({
     inputRange: [0, 300],
     outputRange: [1, 0],
+    extrapolate: "clamp",
   });
 
   useEffect(() => {
@@ -185,10 +189,10 @@ const SearchScreen = ({}) => {
       <FlatList
         data={selections}
         renderItem={renderItemSelection}
-        style={{ marginTop: 20, height: 35 }}
+        style={{ marginTop: 20, height: 48 }}
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{ marginStart: 22, alignItems: "center" }}
+        contentContainerStyle={{ marginStart: 22, alignItems: "center", paddingBottom: 12 }}
       />
     );
   };
@@ -212,7 +216,10 @@ const SearchScreen = ({}) => {
     const hasLoop = textValue.length > 0 || selections.length > 0;
     return (
       <>
-        <TouchableOpacity style={[styles.button, { left: hasLoop ? screenWitdh * 0.33 : undefined }]}>
+        <TouchableOpacity
+          style={[styles.button, { left: hasLoop ? screenWitdh * 0.33 : undefined }]}
+          onPress={() => setShowModal(true)}
+        >
           <FilterImg />
         </TouchableOpacity>
         {hasLoop && (
@@ -233,11 +240,6 @@ const SearchScreen = ({}) => {
     setSearchResult([]);
     setTextValue("");
     removeAnimation();
-  };
-
-  const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
-    const paddingToBottom = 20;
-    return layoutMeasurement.height + contentOffset.y >= contentSize.height - paddingToBottom;
   };
 
   return (
@@ -281,12 +283,12 @@ const SearchScreen = ({}) => {
           ) : (
             !hasSearch && (
               <Swiper
-                style={{ backgroundColor: colors.grey80 }}
+                style={[{ backgroundColor: colors.grey80 }, index === 1 ? { height: 2000 } : { height: 700 }]}
                 index={index}
                 showsHorizontalScrollIndicator={false}
                 onIndexChanged={index => setIndex(index)}
               >
-                <View style={styles.slide1}>
+                <View style={[styles.slide1, { marginTop: selections.length === 0 ? 20 : 10 }]}>
                   <InterestList
                     data={platformsWithImage}
                     styleComponent={{}}
@@ -294,7 +296,7 @@ const SearchScreen = ({}) => {
                     onPressItem={item => setNewSelection(item)}
                   />
                 </View>
-                <View style={styles.slide1}>
+                <View style={[styles.slide1, { marginTop: selections.length === 0 ? 20 : 10 }]}>
                   <InterestList
                     data={genresThemesInfo}
                     styleComponent={{}}
@@ -309,6 +311,7 @@ const SearchScreen = ({}) => {
       </Animated.View>
 
       {renderButtons()}
+      <FiltersModal showModal={showModal} setShowModal={setShowModal} />
     </View>
   );
 };

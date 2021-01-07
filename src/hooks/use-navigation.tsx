@@ -18,6 +18,7 @@ export enum routeNames {
   NewReview = "NewReview",
   LoginScreen = "LoginScreen",
   RegisterScreen = "RegisterScreen",
+  MosaicScreen = "MosaicScreen",
   ProfileScreen = "ProfileScreen",
 }
 

@@ -5,7 +5,7 @@ import { post } from "src/services/fetch";
 const gameFields = `id, rating, name, total_rating, cover.image_id, keywords.name, summary, 
 first_release_date,release_dates.date, screenshots.image_id, artworks.image_id, involved_companies.company.name, involved_companies.publisher,involved_companies.supporting, involved_companies.porting,
 involved_companies.company.slug, involved_companies.developer, genres.name, genres.slug, themes.name, themes.slug, platforms.name, platforms.slug, platforms.abbreviation,
-similar_games.cover.image_id, videos.name, videos.video_id, genres, themes`;
+similar_games.cover.image_id, videos.name, videos.video_id, genres, themes, follows`;
 
 export const getMainGame = async () => {
   const today = moment();
@@ -27,6 +27,24 @@ export const getTopRated = async () => {
 
 export const getGameById = async (id: number) => {
   return await post("/games", `fields ${gameFields}; where id=${id};`);
+};
+
+export const getSoonGames = async () => {
+  const today = moment();
+  //const timeAgo = moment().add("months", 8);
+  return await post(
+    "/games",
+    `fields ${gameFields}; where first_release_date > ${today.unix()} & themes != (42) & follows > 10 & cover.image_id != null;  limit 15;`
+  );
+};
+
+export const getsevenDaysGames = async () => {
+  const today = moment();
+  const timeAgo = moment().add("days", 7);
+  return await post(
+    "/games",
+    `fields ${gameFields}; where first_release_date > ${today.unix()} & first_release_date <= ${timeAgo.unix()}  & themes != (42) & cover.image_id != null;  limit 15;`
+  );
 };
 
 export const searchGames = async search => {
