@@ -14,6 +14,7 @@ import { useForm } from "src/hooks/use-form";
 import { defLogin } from "src/utils/defForm";
 import { LogInValidation } from "src/utils/validation";
 import { logIn } from "src/services/auth";
+import { setToken } from "src/services/fetch";
 import useRootContext from "src/hooks/use-context";
 
 const styles = StyleSheet.create({
@@ -107,6 +108,7 @@ const LoginScreen: () => JSX.Element = () => {
         setMessages({ password: data.message, email: data.message });
       }
       setUser(data.user);
+      setToken(data.user.token);
       navigation.navigate(routeNames.ProfileScreen);
       setIsLoading(false);
     }

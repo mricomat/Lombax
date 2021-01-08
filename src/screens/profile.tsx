@@ -79,10 +79,15 @@ const ProfileScreen: () => JSX.Element = () => {
     langState: [lang],
     user: [user],
   } = useRootContext();
-
   const [recentGames, setRecentGames] = useState<IGame[]>([]);
   const scrollY = new Animated.Value(0);
   const navigation = useNavigation();
+
+  const interests = user.interests
+    ? `${user.interests[0].name}  ${user.interests[1].name}  ${user.interests[2].name}`
+    : "";
+
+  const gamesPlayed = user.gamesFeels.filter(item => item.played);
 
   const marginTop = scrollY.interpolate({
     inputRange: [0, 200],
@@ -130,9 +135,7 @@ const ProfileScreen: () => JSX.Element = () => {
         <Text style={styles.username}>{user.username}</Text>
         <AvatarItem styleComponent={{ marginTop: 14 }} data={user.coverId} />
         <Text style={[styles.username, { marginTop: 12 }]}>Interested in</Text>
-        <Text
-          style={styles.interests}
-        >{`${user.interests[0].name}  ${user.interests[1].name}  ${user.interests[2].name}`}</Text>
+        <Text style={styles.interests}>{interests}</Text>
         <Text style={styles.description} numberOfLines={2}>
           {user.summary}
         </Text>
@@ -149,7 +152,7 @@ const ProfileScreen: () => JSX.Element = () => {
         </TouchableOpacity>
         <TouchableOpacity style={{ alignItems: "center", padding: 5, borderRadius: 15 }}>
           <Text style={styles.titleTab}>Games</Text>
-          <Text style={styles.numberTab}>{15}</Text>
+          <Text style={styles.numberTab}>{gamesPlayed.length}</Text>
         </TouchableOpacity>
         <TouchableOpacity style={{ alignItems: "center", padding: 5, borderRadius: 15 }}>
           <Text style={styles.titleTab}>Following</Text>

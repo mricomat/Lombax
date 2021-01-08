@@ -16,6 +16,8 @@ import storange from "src/utils/storange";
 import { langType } from "src/types/context";
 import { IUser } from "src/types/api";
 import { getToken } from "src/services/fetch";
+import { refreshToken } from "src/services/auth";
+import { defUser } from "src/utils/defForm";
 
 // crash if go back from signup to root
 enableScreens();
@@ -25,9 +27,10 @@ const DefaultOptions = { headerShown: false };
 
 // app root, modals here
 const App = () => {
-  const user = useState<IUser>({} as IUser);
+  const user = useState<IUser>(defUser as IUser);
   const langState = useState<langType>("es");
   const [appState, setAppState] = useState<AppStateStatus>("active");
+  const [isSigned, setIsSigned] = useState("default");
 
   useEffect(() => {
     AppState.addEventListener("change", handleAppStateChange);
@@ -62,6 +65,12 @@ const App = () => {
       if (restoredContext && TokenRestored) {
         console.log("TokenRestored", !!TokenRestored);
         // Refresh toker to get user
+        const { data, error } = await refreshToken();
+        if (!error) {
+          user[1](data.user as IUser);
+          isSigned = true;
+        }
+        setIsSigned(isSigned ? "signed" : "notSigned");
       }
     }
   };

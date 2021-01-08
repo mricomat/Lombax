@@ -5,6 +5,10 @@ export const logIn = (body: ILogInParams) => {
   return post("/login", body);
 };
 
+export const refreshToken = () => {
+  return post("/refreshToken", {}, true);
+};
+
 const AuthApi = {
   logIn,
 };
