@@ -60,6 +60,7 @@ export interface IHeader extends ViewProps {
   title?: string;
   onBackPress?: () => void;
   playIcon?: boolean;
+  profile?: boolean;
   heart?: boolean;
 }
 
@@ -74,7 +75,7 @@ const MainHeader: FC<IHeader> = ({
   return (
     <Animated.View style={[styles.container, styleComponent]}>
       {profile && (
-        <TouchableOpacity style={styles.circleContainer}>
+        <TouchableOpacity style={styles.circleContainer} onPress={onBackPress}>
           <View style={styles.circle} />
           <SettingsImg width={18} height={14} />
         </TouchableOpacity>

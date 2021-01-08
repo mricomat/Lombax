@@ -5,7 +5,7 @@ import { colors, fontStyle } from "src/assets";
 import GameList from "src/components/gameList";
 import Header from "src/components/headers";
 import AvatarItem from "src/components/items/avatarItem";
-import useNavigation from "src/hooks/use-navigation";
+import useNavigation, { routeNames } from "src/hooks/use-navigation";
 import { getMainGame } from "src/services/games";
 import IGame from "src/types/api";
 import { getImageUrl, getCoverUrl } from "src/utils/image";
@@ -80,12 +80,15 @@ const ProfileScreen: () => JSX.Element = () => {
     user: [user],
   } = useRootContext();
   const [recentGames, setRecentGames] = useState<IGame[]>([]);
+  const [heightView, setHeightView] = useState<number>(DeviceUtils.deviceSize.height * 0.6);
+
   const scrollY = new Animated.Value(0);
   const navigation = useNavigation();
 
-  const interests = user.interests
-    ? `${user.interests[0].name}  ${user.interests[1].name}  ${user.interests[2].name}`
-    : "";
+  const interests =
+    user.interests.length !== 0
+      ? `${user.interests[0].name}  ${user.interests[1].name}  ${user.interests[2].name}`
+      : "";
 
   const gamesPlayed = user.gamesFeels.filter(item => item.played);
 
@@ -103,7 +106,7 @@ const ProfileScreen: () => JSX.Element = () => {
 
   const heightBack = scrollY.interpolate({
     inputRange: [0, 200],
-    outputRange: [DeviceUtils.deviceSize.height * 0.57, 80],
+    outputRange: [heightView, 80],
     extrapolate: "clamp",
   });
 
@@ -207,13 +210,21 @@ const ProfileScreen: () => JSX.Element = () => {
           playIcon={false}
           heart={false}
           styleComponent={{ height: heightHeader }}
-          onBackPress={() => navigation.goBack()}
+          onBackPress={() => navigation.navigate(routeNames.SettingsScreen)}
           profile={true}
         />
       </Animated.View>
 
       <ScrollView onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }])}>
-        <View style={{ paddingHorizontal: 22 }}>
+        <View
+          style={{ paddingHorizontal: 22 }}
+          onLayout={event => {
+            var { height } = event.nativeEvent.layout;
+            if (height !== heightView) {
+              setHeightView(height + 38);
+            }
+          }}
+        >
           {renderTopInfo()}
           {renderInfoBar()}
         </View>

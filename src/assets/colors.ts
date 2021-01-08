@@ -2,6 +2,7 @@ export enum colors {
   blue50 = "#2787ED",
   bluer70 = "#1F68B6",
   blue100 = "#11488B",
+  darkBlue = "#08274E",
 
   blue20 = "#7F868C",
 
@@ -16,6 +17,7 @@ export enum colors {
   brown20 = "#242424",
 
   red100 = "#B11818",
+  red80 = "#7A0000",
   red70 = "#AD2507",
   red10 = "#372424",
 

@@ -20,6 +20,7 @@ export enum routeNames {
   RegisterScreen = "RegisterScreen",
   MosaicScreen = "MosaicScreen",
   ProfileScreen = "ProfileScreen",
+  SettingsScreen = "SettingsScreen",
 }
 
 export enum modalNames {
