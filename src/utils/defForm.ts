@@ -8,6 +8,16 @@ export const defLogin = {
   password: isDebug ? "shadow1973" : "",
 };
 
+export const defInfoRegister = {
+  name: isDebug ? "Martin" : "",
+  lastName: isDebug ? "Rico Martinez" : "",
+  username: isDebug ? "mrico" : "",
+  email: isDebug ? "m2@gmail.com" : "",
+  birth: isDebug ? "" : "",
+  password: isDebug ? "MyCoolPassword1!" : "",
+  confirmPassword: isDebug ? "MyCoolPassword1!" : "",
+};
+
 export const defUser: IUser = {
   id: "",
   name: "",

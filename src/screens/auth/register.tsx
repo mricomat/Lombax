@@ -21,7 +21,7 @@ const styles = StyleSheet.create({
   },
   background: {
     backgroundColor: colors.grey50,
-    opacity: 0.65,
+    opacity: 0.7,
     width: "100%",
     height: "100%",
     borderBottomEndRadius: 15,
@@ -46,7 +46,7 @@ const RegisterScreen: () => JSX.Element = () => {
   return (
     <View style={styles.container}>
       {renderBackground()}
-      <View style={{ paddingHorizontal: 22, flex: 1 }}>
+      <View style={{ paddingHorizontal: 22 }}>
         <Header
           title={"Register"}
           playIcon={false}
@@ -54,8 +54,8 @@ const RegisterScreen: () => JSX.Element = () => {
           styleComponent={{ marginTop: 35 }}
           onBackPress={() => navigation.goBack()}
         />
-        <RegisterTab styleComponent={{ marginTop: 20 }} setBackground={setBackground} />
       </View>
+      <RegisterTab styleComponent={{ marginTop: 20 }} setBackground={setBackground} />
     </View>
   );
 };

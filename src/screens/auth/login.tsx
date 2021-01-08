@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
     height: "140%",
     alignContent: "center",
     position: "absolute",
-    top: -136,
+    top: -125,
     left: 0,
   },
   videoButton: {
@@ -113,6 +113,14 @@ const LoginScreen: () => JSX.Element = () => {
       setIsLoading(false);
     }
   );
+
+  useEffect(() => {
+    Object.keys(errors).some(k => {
+      if (errors[k]) {
+        setIsLoading(false);
+      }
+    });
+  }, [errors]);
 
   const renderBackgroundImage = () => {
     return (

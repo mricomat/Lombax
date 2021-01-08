@@ -28,6 +28,7 @@
     "adb": "adb reverse tcp:8081 tcp:8081",
     "apk": "cd ./android ./gradlew assembleRelease && cd ..",
     "apk-install": "adb install /Users/jdominguezr/Documents/clubUs-app/android/app/build/outputs/apk/release/app-release.apk",
+    "apk-release": "cd android && gradlew assembleRelease && cd ..",
     "apk-build-install": "yarn apk && yarn apk-install",
     "aab": "cd ./android ./gradlew bundleRelease && cd ..",
     "apk-aab": "yarn apk && yarn aab",

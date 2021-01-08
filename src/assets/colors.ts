@@ -45,6 +45,7 @@ export enum opacity {
 
 export const gradients = {
   bottomMain: ["rgba(0, 0, 0, 0.0)", "#171F25"],
+  bottomRegister: ["rgba(0, 0, 0, 0.0)", "#171F25"],
   topMain: ["#171F25", "rgba(0, 0, 0, 0.3)", "rgba(0, 0, 0, 0.0)"],
   mainGenres: ["rgba(0,0,0,0.00)", "rgba(0,0,0,0.00)", "rgba(0, 0, 0, 1)"],
 };

@@ -11,5 +11,6 @@
   "IsAlphanumeric": "El campo solo puede contener letras y números",
   "IsDocNumberRepeated": "El documento está repetido en otro asegurado",
   "isAlphaBlank": "El campo solo puede contener letras",
-  "Length": "El post no puede superar el número máximo de letras"
+  "Length": "El post no puede superar el número máximo de letras",
+  "MinLength": "Debe contener al menos 8 carácteres"
 }
