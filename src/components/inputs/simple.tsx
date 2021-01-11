@@ -13,6 +13,9 @@ import {
 
 import { colors, dimensions, fontStyle } from "../../assets/index";
 import DeviceUtils from "src/utils/device";
+import CalendarImg from "src/assets/icons/calendar.svg";
+import Eye from "src/assets/icons/eye.svg";
+import NoEye from "src/assets/icons/no_eye.svg";
 
 const isIOS = DeviceUtils.isIOS;
 
@@ -65,7 +68,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     alignSelf: "center",
     flex: 1,
-    right: 10,
+    right: 20,
   },
   flexSpace: {
     flex: 1,
@@ -168,11 +171,6 @@ const AnimatedInput: FC<IInputProps> = ({
 
   const labelColor = () => {
     let labelStyle = {};
-    // if (showError) {
-    //   labelStyle = {
-    //     color: errorColor || colors.red100,
-    //   };
-    // }
     return labelStyle;
   };
 
@@ -189,7 +187,7 @@ const AnimatedInput: FC<IInputProps> = ({
     Animated.timing(animatedIsFocused, {
       toValue: showInput ? 1 : 0,
       duration: 150,
-      useNativeDriver: false,
+      // useNativeDriver: false,
     }).start(() => {
       if (!showInput) {
         setShowInput(true);
@@ -302,16 +300,16 @@ const AnimatedInput: FC<IInputProps> = ({
         </Animated.View>
         {LeftIcon && <LeftIcon />}
         {RightIcon && <RightIcon style={{ position: "absolute", right: 16 }} />}
-        {/* {secureTextEntry && (
+        {secureTextEntry && (
           <TouchableOpacity style={styles.eye} onPress={() => setIsHidden(!isHidden)}>
-            <Eye fill={isHidden ? colors.grey30 : colors.black} />
+            {isHidden ? <NoEye /> : <Eye />}
           </TouchableOpacity>
         )}
         {isCalendar && (
-          <TouchableOpacity style={styles.eye} onPress={() => onPressCalendar()}>
+          <TouchableOpacity style={styles.eye} onPress={() => onPressCalendar && onPressCalendar()}>
             <CalendarImg />
           </TouchableOpacity>
-        )} */}
+        )}
       </TouchableOpacity>
       {isError && <Text style={styles.error}>{errorText}</Text>}
     </View>

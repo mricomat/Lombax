@@ -9,6 +9,7 @@ import Config from "src/utils/config";
 export enum routeNames {
   Splash = "Splash",
   HomeStack = "HomeStack",
+  HomeTab = "HomeTab",
   Feed = "Feed",
   GameDetail = "GameDetail",
   ReviewDetail = "ReviewDetail",
@@ -18,6 +19,9 @@ export enum routeNames {
   NewReview = "NewReview",
   LoginScreen = "LoginScreen",
   RegisterScreen = "RegisterScreen",
+  RegisterInfo = "RegisterInfo",
+  RegisterAvatar = "RegisterAvatar",
+  RegisterInterests = "RegisterInterests",
   MosaicScreen = "MosaicScreen",
   ProfileScreen = "ProfileScreen",
   SettingsScreen = "SettingsScreen",
@@ -28,7 +32,7 @@ export enum modalNames {
 }
 
 let current: string | number | undefined = "";
-
+console.log(current);
 const setCurrent = (c = "") => {
   current = c;
   if (c) setTimeout(() => setCurrent(), 1000);

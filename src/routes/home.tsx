@@ -5,18 +5,18 @@ import { routeNames } from "src/hooks/use-navigation";
 import HomeTab from "src/routes/homeTab";
 import AnimationUtils from "src/utils/animations";
 
-const RegisterStack = createStackNavigator();
+const HomeStack = createStackNavigator();
 
 const DefaultOptions = {
   headerShown: false,
 };
 
-const RegisterNavigator = () => {
+const HomeNavigator = () => {
   return (
-    <RegisterStack.Navigator screenOptions={AnimationUtils.stackOptions}>
-      <RegisterStack.Screen name={routeNames.HomeStack} component={HomeTab} options={DefaultOptions} />
-    </RegisterStack.Navigator>
+    <HomeStack.Navigator screenOptions={AnimationUtils.stackOptions}>
+      <HomeStack.Screen name={routeNames.HomeTab} component={HomeTab} options={DefaultOptions} />
+    </HomeStack.Navigator>
   );
 };
 
-export default RegisterNavigator;
+export default HomeNavigator;

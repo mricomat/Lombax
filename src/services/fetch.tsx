@@ -68,7 +68,7 @@ const checkResponse = async (response: Promise<{ response: AxiosResponse }>): Pr
         //   deleteToken();
         //   return { status: 500, data, error: "Identifier or password is wrong" };
         // }
-        return { status: 500, data, error: errors[0].message };
+        // return { status: 500, data, error: errors[0].message };
       }
 
       // if (data && data.login && data.login.token) {

@@ -1,7 +1,7 @@
 import { IUser } from "src/types/api";
 import Config from "src/utils/config";
 
-const isDebug = true;
+const isDebug = __DEV__;
 
 export const defLogin = {
   email: isDebug ? "m2@gmail.com" : "",
@@ -12,10 +12,9 @@ export const defInfoRegister = {
   name: isDebug ? "Martin" : "",
   lastName: isDebug ? "Rico Martinez" : "",
   username: isDebug ? "mrico" : "",
-  email: isDebug ? "m2@gmail.com" : "",
-  birth: isDebug ? "" : "",
+  email: isDebug ? "m3@gmail.com" : "",
+  birth: isDebug ? "10/09/1993" : "",
   password: isDebug ? "MyCoolPassword1!" : "",
-  confirmPassword: isDebug ? "MyCoolPassword1!" : "",
 };
 
 export const defUser: IUser = {

@@ -26,16 +26,16 @@ const styles = StyleSheet.create({
 
 export interface IAvatarItem extends ViewProps {
   styleComponent?: StyleProp<ViewStyle>;
+  styleImage?: StyleProp<ImageStyle>;
   data?: string;
   onPress?: () => void;
 }
 
-const AvatarItem: FC<IAvatarItem> = ({ styleComponent, onPress, data }) => {
+const AvatarItem: FC<IAvatarItem> = ({ styleComponent, onPress, data, styleImage }) => {
   const uri = getCoverUrl(data);
-
   return (
     <TouchableOpacity style={[styles.container, styleComponent]} onPress={onPress}>
-      <Image source={{ uri }} style={styles.image} />
+      <Image source={{ uri }} style={[styles.image, styleImage]} />
     </TouchableOpacity>
   );
 };

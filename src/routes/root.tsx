@@ -10,7 +10,7 @@ import GameDetailScreen from "src/screens/gameDetail";
 import PlayerScreen from "src/screens/player";
 import ReviewDetailScreen from "src/screens/reviews/reviewDetail";
 import NewReviewScreen from "src/screens/reviews/newReview";
-import RegisterScreen from "src/screens/auth/register";
+import RegisterStack from "src/routes/register";
 import MosaicScreen from "src/screens/mosaic";
 import storange from "src/utils/storange";
 import { langType } from "src/types/context";
@@ -84,7 +84,7 @@ const App = () => {
         <RootStack.Screen name={routeNames.ReviewDetail} component={ReviewDetailScreen} options={DefaultOptions} />
         <RootStack.Screen name={routeNames.NewReview} component={NewReviewScreen} options={DefaultOptions} />
         <RootStack.Screen name={routeNames.PlayerScreen} component={PlayerScreen} options={DefaultOptions} />
-        <RootStack.Screen name={routeNames.RegisterScreen} component={RegisterScreen} options={DefaultOptions} />
+        <RootStack.Screen name={routeNames.RegisterScreen} component={RegisterStack} options={DefaultOptions} />
       </RootStack.Navigator>
     </RootContext.Provider>
   );

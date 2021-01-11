@@ -1,5 +1,5 @@
-import { Route } from '@react-navigation/native';
-import { StackCardStyleInterpolator, StackNavigationOptions } from '@react-navigation/stack';
+import { Route } from "@react-navigation/native";
+import { StackCardStyleInterpolator, StackNavigationOptions } from "@react-navigation/stack";
 
 export type stackOptionType =
   | StackNavigationOptions
@@ -15,7 +15,7 @@ const cardStyleInterpolator: StackCardStyleInterpolator = ({ current }) => {
 
 const stackOptions: stackOptionType = {
   headerShown: false,
-  animationTypeForReplace: 'pop',
+  animationTypeForReplace: "pop",
   animationEnabled: true,
   // TransitionSpecs.RevealFromBottomAndroidSpec, TransitionSpecs.FadeInFromBottomAndroidSpec,
   // transitionSpec: { open: transition, close: transition },

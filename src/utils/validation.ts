@@ -78,20 +78,13 @@ export class InfoRegisterValidation {
 
   @IsNotEmpty()
   @Matches(BIRTH_DATE)
-  public birthDate: string;
+  public birth: string;
 
   @IsNotEmpty()
   @Matches(/[A-Z]/, { message: "passwordMustContainUppercase" })
   @Matches(/[a-z]/, { message: "passwordMustContainLowercase" })
   @MinLength(8, { message: "passwordTooShort" })
   public password: string;
-
-  @IsNotEmpty()
-  @isEqualTo("password")
-  @Matches(/[A-Z]/, { message: "passwordMustContainUppercase" })
-  @Matches(/[a-z]/, { message: "passwordMustContainLowercase" })
-  @MinLength(8, { message: "passwordTooShort" })
-  public confirmPassword: string;
 }
 
 // export const isValidPhone = (number: string, region = 'ZZ') => validator.isPhoneNumber(number, region);
