@@ -1,4 +1,4 @@
-import { post } from "src/services/fetch";
+import { post, put } from "src/services/fetch";
 import { ILogInParams, IUser } from "src/types/api";
 
 export const logIn = (body: ILogInParams) => {
@@ -15,6 +15,10 @@ export const registerCheck = (email: string, username: string) => {
 
 export const register = (user: IUser) => {
   return post("/users", user);
+};
+
+export const updateUser = (user: any) => {
+  return put("/user", user);
 };
 
 export const uploadRegisterImages = (files: FormData) => {

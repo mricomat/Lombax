@@ -16,6 +16,7 @@ export enum routeNames {
   PlayerScreen = "PlayerScreen",
   SearchScreen = "SearchScreen",
   ReviewsScreen = "ReviewsScreen",
+  FavoriteSelection = "FavoriteSelection",
   NewReview = "NewReview",
   LoginScreen = "LoginScreen",
   RegisterScreen = "RegisterScreen",

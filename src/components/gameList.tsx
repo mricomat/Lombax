@@ -36,7 +36,17 @@ const GameList: FC<IGameList> = ({ styleComponent, games = [], title }) => {
         onPress={() => navigation.navigate(routeNames.GameDetail, { game: item })}
       />
     ) : (
-      <View />
+      <View
+        style={{
+          borderWidth: 0.3,
+          borderColor: colors.grey10,
+          borderRadius: 10,
+          backgroundColor: colors.grey50,
+          height: 184,
+          width: 135,
+          marginRight: 10,
+        }}
+      ></View>
     );
   };
 
@@ -57,7 +67,7 @@ const GameList: FC<IGameList> = ({ styleComponent, games = [], title }) => {
         data={games}
         renderItem={renderItem}
         horizontal
-        contentContainerStyle={{ marginStart: 20 }}
+        contentContainerStyle={{ marginStart: 22, paddingEnd: 22 }}
         showsHorizontalScrollIndicator={false}
       />
     </View>

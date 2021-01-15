@@ -33,14 +33,15 @@ export interface IGameItem extends ViewProps {
   styleImage?: StyleProp<ImageStyle>;
   cover?: ICover;
   activity?: boolean;
+  disabled?: boolean;
   onPress?: () => void;
 }
 
-const GameItem: FC<IGameItem> = ({ styleComponent, cover, onPress, activity, styleImage }) => {
+const GameItem: FC<IGameItem> = ({ styleComponent, cover, onPress, activity, styleImage, disabled = false }) => {
   const uri = getImageUrl(cover && cover.image_id, "t_cover_big_2x");
 
   return (
-    <TouchableOpacity style={[styles.container, styleComponent]} onPress={onPress}>
+    <TouchableOpacity style={[styles.container, styleComponent]} onPress={onPress} disabled={disabled}>
       <Image source={{ uri }} style={[styles.image, styleImage]} />
       {activity && (
         <View style={styles.activityContainer}>

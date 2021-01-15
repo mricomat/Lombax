@@ -147,6 +147,7 @@ const RegisterScreen: () => JSX.Element = () => {
               errorText={messages.email}
               styleContent={{ marginTop: 20 }}
             />
+
             <Input
               placeholder={"Birth *"}
               value={values.birth}
@@ -167,6 +168,17 @@ const RegisterScreen: () => JSX.Element = () => {
               autoFocus={false}
               autoCapitalize="none"
               secureTextEntry={true}
+              styleContent={{ marginTop: 20 }}
+            />
+            <Input
+              placeholder={"Brief description or quote"}
+              value={values.description}
+              isError={errors.description}
+              autoFocus={false}
+              isDescription
+              descriptionHeigth={180}
+              onChangeText={description => updateForm({ description })}
+              errorText={messages.description}
               styleContent={{ marginTop: 20 }}
             />
             <Button

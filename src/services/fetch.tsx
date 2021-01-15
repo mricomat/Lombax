@@ -90,3 +90,13 @@ export const post = async (endPoint: string, body: any, auth: boolean = false) =
   auth && checkToken();
   return checkResponse(axios.post(endPoint, body).catch(e => e));
 };
+
+export const put = async (endPoint: string, body: any, auth: boolean = false) => {
+  auth && checkToken();
+  return checkResponse(axios.put(endPoint, body).catch(e => e));
+};
+
+export const get = async (endPoint: string, params: any, auth: boolean = false) => {
+  auth && checkToken();
+  return checkResponse(axios.get(endPoint, { params }).catch(e => e));
+};

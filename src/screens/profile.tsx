@@ -35,6 +35,7 @@ const styles = StyleSheet.create({
   username: {
     color: colors.grey65,
     ...fontStyle.menuLabel,
+    fontSize: 14,
   },
   interests: {
     color: colors.white,
@@ -80,6 +81,7 @@ const ProfileScreen: () => JSX.Element = () => {
     user: [user],
   } = useRootContext();
   const [recentGames, setRecentGames] = useState<IGame[]>([]);
+  const [favorites, setFavorites] = useState<any[]>([{}, {}, {}, {}]);
   const [heightView, setHeightView] = useState<number>(DeviceUtils.deviceSize.height * 0.6);
 
   const scrollY = new Animated.Value(0);
@@ -112,6 +114,17 @@ const ProfileScreen: () => JSX.Element = () => {
 
   useEffect(() => {
     mainGameService();
+    let newFavs = [...favorites];
+    const userFavs: any[] = user.favorites;
+    userFavs.map((item, index) => {
+      newFavs[index] = {
+        id: item.id,
+        cover: {
+          image_id: item.imageId,
+        },
+      };
+    });
+    setFavorites([...newFavs]);
   }, []);
 
   const mainGameService = async () => {
@@ -140,7 +153,7 @@ const ProfileScreen: () => JSX.Element = () => {
         <Text style={[styles.username, { marginTop: 12 }]}>Interested in</Text>
         <Text style={styles.interests}>{interests}</Text>
         <Text style={styles.description} numberOfLines={2}>
-          {user.summary}
+          {user.description}
         </Text>
       </View>
     );
@@ -174,7 +187,7 @@ const ProfileScreen: () => JSX.Element = () => {
       <View style={styles.infoBar}>
         <TouchableOpacity style={{ alignItems: "center", padding: 5, borderRadius: 15 }}>
           <Text style={styles.titleTab}>Diary</Text>
-          <Text style={styles.numberTab}>47</Text>
+          <Text style={styles.numberTab}>{user.diary.length}</Text>
         </TouchableOpacity>
         <TouchableOpacity style={{ alignItems: "center", padding: 5, borderRadius: 15 }}>
           <Text style={styles.titleTab}>Likes</Text>
@@ -195,8 +208,8 @@ const ProfileScreen: () => JSX.Element = () => {
   const renderFavorites = () => {
     return (
       <View style={{ marginTop: 16 }}>
-        <GameList title={"Favorites"} games={recentGames} />
-        <GameList title={"Recent Activity"} games={recentGames} styleComponent={{ marginTop: 12 }} />
+        <GameList title={"Favorites"} games={favorites} />
+        {/* <GameList title={"Recent Activity"} games={recentGames} styleComponent={{ marginTop: 12 }} /> */}
       </View>
     );
   };

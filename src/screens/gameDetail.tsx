@@ -13,7 +13,10 @@ import PlayImg from "src/assets/icons/play_v.svg";
 import StartImg from "src/assets/icons/star";
 import GameDetailTab from "src/components/gameDetailTab";
 import EditButton from "src/components/buttons/edit";
+import GameModal from "src/components/modals/gameModal";
 import { getGameById } from "src/services/games";
+import { postReview, getUserGameReview, updateReview } from "src/services/reviews";
+import useRootContext from "src/hooks/use-context";
 
 const styles = StyleSheet.create({
   component: {
@@ -143,9 +146,15 @@ const styles = StyleSheet.create({
 });
 
 const GameDetail: React.FC<any> = ({ route }) => {
+  const {
+    langState: [lang],
+    user: [user, setUser],
+  } = useRootContext();
   const [game, setGame] = useState<IGame>((route.params && route.params.game) || {});
   //const [scrollY, setScrollY] = useState<any>(new Animated.Value(0));
   const [isLoading, setIsLoading] = useState<boolean>(route.params.isEmpty || false);
+  const [showModal, setShowModal] = useState<boolean>(false);
+  const [ratingReview, setRatingReview] = useState<any>({});
   const navigation = useNavigation();
 
   const scrollY = new Animated.Value(0);
@@ -166,12 +175,38 @@ const GameDetail: React.FC<any> = ({ route }) => {
     if (isLoading) {
       getGameService();
     }
+    getUserReviewsService();
   }, []);
 
   const getGameService = async () => {
     const { data } = await getGameById(game.id);
     setGame(data[0]);
     setIsLoading(false);
+  };
+
+  const getUserReviewsService = async () => {
+    const result = await getUserGameReview(user.id, game.id);
+    if (!result.error) {
+      const reviews = result.data.reviews;
+      if (reviews.length > 0) {
+        setRatingReview(reviews[0]);
+      }
+    }
+  };
+
+  const sendRatingReview = async (rating: number) => {
+    if (Object.keys(ratingReview).length < 0) {
+      postReview({
+        userId: user.id,
+        rating,
+        game,
+      });
+    } else {
+      const result = await updateReview(ratingReview._id, rating);
+      if (!result.error) {
+        setRatingReview(result.data.review);
+      }
+    }
   };
 
   const renderBackground = () => {
@@ -213,6 +248,24 @@ const GameDetail: React.FC<any> = ({ route }) => {
     let companies = game.involved_companies?.filter(item => item.developer);
     if (!companies || companies?.length <= 0) companies = game.involved_companies;
     return companies[0].company.name;
+  };
+
+  const renderGameModal = () => {
+    return (
+      <GameModal
+        showModal={showModal}
+        setShowModal={setShowModal}
+        rating={ratingReview.rating}
+        isFavorite={user.favorites.findIndex(item => item.id === game.id) !== -1}
+        favoritePress={() => {
+          setShowModal(false);
+          navigation.navigate(routeNames.FavoriteSelection, { game });
+        }}
+        ratePress={rating => {
+          sendRatingReview(rating);
+        }}
+      />
+    );
   };
 
   const renderInfoContainer = () => {
@@ -386,10 +439,8 @@ const GameDetail: React.FC<any> = ({ route }) => {
           )}
         </View>
       </ScrollView>
-      <EditButton
-        styleComponent={styles.editButton}
-        onPress={() => navigation.navigate(routeNames.NewReview, { game })}
-      />
+      <EditButton styleComponent={styles.editButton} onPress={() => setShowModal(true)} />
+      {renderGameModal()}
     </View>
   );
 };

@@ -4,7 +4,7 @@ export interface IUser {
   email: string;
   username: string;
   token: string;
-  summary: string;
+  description: string;
   coverId: string;
   backgroundId: string;
   interests: IGenre[];
@@ -139,10 +139,10 @@ export interface IGenre {
 }
 
 export interface IReview {
-  user: IUser;
+  userId: string;
   game: IGame;
   summary?: string;
-  rating?: string;
+  rating?: number;
   dateFinished?: string;
   timeToBeat?: string;
 }

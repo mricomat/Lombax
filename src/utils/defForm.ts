@@ -4,8 +4,8 @@ import Config from "src/utils/config";
 const isDebug = __DEV__;
 
 export const defLogin = {
-  email: isDebug ? "m2@gmail.com" : "",
-  password: isDebug ? "shadow1973" : "",
+  email: isDebug ? "m3@gmail.com" : "",
+  password: isDebug ? "MyCoolPassword1!" : "",
 };
 
 export const defInfoRegister = {
@@ -15,6 +15,9 @@ export const defInfoRegister = {
   email: isDebug ? "m3@gmail.com" : "",
   birth: isDebug ? "10/09/1993" : "",
   password: isDebug ? "MyCoolPassword1!" : "",
+  description: isDebug
+    ? `"I am Solaire of Astora, an adherent to the Lord of Sunlight. Now that I am Undead, I have come to this great land, the birthplace of Lord Gwyn, to seek my very own sun!"\n\nSolaire of Astora`
+    : "",
 };
 
 export const defUser: IUser = {

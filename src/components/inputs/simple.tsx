@@ -96,6 +96,7 @@ export interface IInputProps extends TextInputProperties {
   isDescription?: boolean;
   LeftIcon?: any;
   RightIcon?: any;
+  descriptionHeigth?: number;
 }
 
 const AnimatedInput: FC<IInputProps> = ({
@@ -120,6 +121,7 @@ const AnimatedInput: FC<IInputProps> = ({
   onChangeText,
   RightIcon,
   LeftIcon,
+  descriptionHeigth = 300,
   ...others
 }) => {
   const [showInput, setShowInput] = useState(false);
@@ -187,7 +189,7 @@ const AnimatedInput: FC<IInputProps> = ({
     Animated.timing(animatedIsFocused, {
       toValue: showInput ? 1 : 0,
       duration: 150,
-      // useNativeDriver: false,
+      useNativeDriver: false,
     }).start(() => {
       if (!showInput) {
         setShowInput(true);
@@ -246,7 +248,7 @@ const AnimatedInput: FC<IInputProps> = ({
           styles.content,
           styleContent,
           borderColor(),
-          isDescription && { height: 300, justifyContent: "flex-start" },
+          isDescription && { height: descriptionHeigth, justifyContent: "flex-start" },
         ]}
         activeOpacity={1}
         onPress={onPressInput}
