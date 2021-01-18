@@ -301,7 +301,7 @@ const AnimatedInput: FC<IInputProps> = ({
           </View>
         </Animated.View>
         {LeftIcon && <LeftIcon />}
-        {RightIcon && <RightIcon style={{ position: "absolute", right: 16 }} />}
+        {RightIcon && <RightIcon style={{ position: "absolute", right: 18 }} width={20} height={14} fill={"#B2B6B9"} />}
         {secureTextEntry && (
           <TouchableOpacity style={styles.eye} onPress={() => setIsHidden(!isHidden)}>
             {isHidden ? <NoEye /> : <Eye />}

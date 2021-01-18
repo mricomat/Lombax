@@ -12,7 +12,7 @@ export interface IUser {
   followers: IUser[];
   following: IUser[];
   reviews: IReview[];
-  gamesFeels: IGameFeel[];
+  gameFeels: IGameFeel[];
   diary: IDiary[];
 }
 
@@ -31,7 +31,7 @@ export default interface IGame {
   cover?: ICover;
   dlcs?: string[];
   expansions?: string[];
-  firstReleaseDate?: number;
+  first_release_date?: number;
   follows?: number;
   franchises?: string[];
   gameEngines?: string[];
@@ -143,15 +143,23 @@ export interface IReview {
   game: IGame;
   summary?: string;
   rating?: number;
-  dateFinished?: string;
+  dateFinished?: number;
   timeToBeat?: string;
 }
 
 export interface IGameFeel {
   user: IUser;
   game: IGame;
-  played?: boolean;
+  gameStatus: GameStatus;
   like?: boolean;
+}
+
+export enum GameStatus {
+  WantPlay = "WANT_TO_PLAY",
+  Playing = "PLAYING",
+  Beaten = "BEATEN",
+  Completed = "COMPLETED",
+  Abandoned = "ABANDONED",
 }
 
 export interface IDiary {

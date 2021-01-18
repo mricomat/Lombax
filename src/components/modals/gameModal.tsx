@@ -1,22 +1,15 @@
 import React, { FC } from "react";
-import { FlatList, StyleProp, StyleSheet, Text, View, ViewProps, ViewStyle, TouchableOpacity } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View, ViewProps } from "react-native";
 import Modal from "react-native-modal";
-import LinearGradient from "react-native-linear-gradient";
-import { Rating, AirbnbRating, TabRating } from "react-native-ratings";
 
-import { colors, fontStyle, dimensions } from "src/assets";
-import { gradients } from "src/assets/colors";
-import IGame from "src/types/api";
-import CrossImg from "src/assets/icons/cross.svg";
-import { genresThemesSorted, defaultSortItem } from "src/utils/constants";
+import { colors, dimensions, fontStyle } from "src/assets";
 import GameImg from "src/assets/icons/game.svg";
-import ShareImg from "src/assets/icons/share.svg";
 import ListImg from "src/assets/icons/lists.svg";
-import Stars from "src/components/stars";
-import StarImg from "src/assets/icons/star";
 import PencilImg from "src/assets/icons/pencil";
+import ShareImg from "src/assets/icons/share.svg";
+import StarImg from "src/assets/icons/star";
 import TapRating from "src/components/tabRating";
-import useNavigation, { routeNames } from "src/hooks/use-navigation";
+import useNavigation from "src/hooks/use-navigation";
 
 const styles = StyleSheet.create({
   container: {
@@ -104,7 +97,7 @@ const GameModal: FC<IGameModal> = ({
       <View style={styles.contentContainer}>
         <View style={styles.firstContainer}>
           <View style={styles.align}>
-            <TouchableOpacity style={styles.circleContainer}>
+            <TouchableOpacity style={styles.circleContainer} onPress={playPress}>
               <View style={styles.circle} />
               <GameImg width={30} height={30} />
             </TouchableOpacity>
@@ -149,7 +142,7 @@ const GameModal: FC<IGameModal> = ({
         </View>
         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
           <View style={[styles.align, { marginRight: 10 }]}>
-            <TouchableOpacity style={styles.circleContainer}>
+            <TouchableOpacity style={styles.circleContainer} onPress={reviewPress}>
               <View style={styles.circle} />
               <PencilImg />
             </TouchableOpacity>

@@ -1,3 +1,9 @@
+import AbandonedImg from "src/assets/images/abandoned.png";
+import BeatenImg from "src/assets/images/beaten.png";
+import CompletedImg from "src/assets/images/completed.png";
+import PlayingImg from "src/assets/images/playing2.png";
+import WantPlayImg from "src/assets/images/wantplay.png";
+
 export const genresThemesInfo = [
   { id: 4, type: "genres", name: "Fighting", image_id: "co1lga", colorLeft: "#232323", colorRight: "#6C6C6C" },
   { id: 5, type: "genres", name: "Shooter", image_id: "co1re6", colorLeft: "#F59B23", colorRight: "#7B4E12" },
@@ -75,3 +81,19 @@ export const genresThemesSorted = JSON.parse(JSON.stringify(genresThemesInfo)).s
 );
 
 export const defaultSortItem = { id: "0", type: "all", name: "All genres" };
+
+export const gameStatusColors = {
+  WANT_TO_PLAY: "#3DBCE4",
+  PLAYING: "#2EDBB7",
+  BEATEN: "#7346FD",
+  COMPLETED: "#BD04B2",
+  ABANDONED: "#FF1213",
+};
+
+export const getGameStatusSource = {
+  WANT_TO_PLAY: WantPlayImg,
+  PLAYING: PlayingImg,
+  BEATEN: BeatenImg,
+  COMPLETED: CompletedImg,
+  ABANDONED: AbandonedImg,
+};

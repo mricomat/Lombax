@@ -26,7 +26,7 @@ export const defUser: IUser = {
   email: "",
   username: "",
   token: "",
-  summary: "",
+  description: "",
   coverId: "",
   backgroundId: "",
   interests: [],
@@ -34,6 +34,14 @@ export const defUser: IUser = {
   followers: [],
   following: [],
   reviews: [],
-  gamesFeels: [],
+  gameFeels: [],
   diary: [],
+};
+
+export const defReview = {
+  date: false ? "10/09/1993" : "",
+  timeToBeat: false ? "40" : "",
+  review: false
+    ? `"I am Solaire of Astora, an adherent to the Lord of Sunlight. Now that I am Undead, I have come to this great land, the birthplace of Lord Gwyn, to seek my very own sun!"\n\nSolaire of Astora`
+    : "",
 };

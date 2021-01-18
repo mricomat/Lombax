@@ -19,14 +19,13 @@ export interface IStars extends ViewProps {
 }
 
 const StarsComponent: FC<IStars> = ({ styleComponent, rating, width, height }) => {
-  const fiveRating = (rating / 100) * 5;
   return (
     <View style={[styles.container, styleComponent]}>
-      <StarImg fill={fiveRating < 1 ? colors.grey65 : colors.blue100} width={width} height={height} />
-      <StarImg fill={fiveRating < 2 ? colors.grey65 : colors.bluer70} width={width} height={height} />
-      <StarImg fill={fiveRating < 3 ? colors.grey65 : colors.blue50} width={width} height={height} />
-      <StarImg fill={fiveRating < 4 ? colors.grey65 : colors.blue50} width={width} height={height} />
-      <StarImg fill={fiveRating < 5 ? colors.grey65 : colors.blue50} width={width} height={height} />
+      <StarImg fill={rating < 1 ? colors.grey65 : colors.blue100} width={width} height={height} />
+      <StarImg fill={rating < 2 ? colors.grey65 : colors.bluer70} width={width} height={height} />
+      <StarImg fill={rating < 3 ? colors.grey65 : colors.blue50} width={width} height={height} />
+      <StarImg fill={rating < 4 ? colors.grey65 : colors.blue50} width={width} height={height} />
+      <StarImg fill={rating < 5 ? colors.grey65 : colors.blue50} width={width} height={height} />
     </View>
   );
 };

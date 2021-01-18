@@ -82,6 +82,7 @@ const ProfileScreen: () => JSX.Element = () => {
   } = useRootContext();
   const [recentGames, setRecentGames] = useState<IGame[]>([]);
   const [favorites, setFavorites] = useState<any[]>([{}, {}, {}, {}]);
+  const [diary, setDiary] = useState<any[]>([{}, {}, {}, {}]);
   const [heightView, setHeightView] = useState<number>(DeviceUtils.deviceSize.height * 0.6);
 
   const scrollY = new Animated.Value(0);
@@ -92,7 +93,7 @@ const ProfileScreen: () => JSX.Element = () => {
       ? `${user.interests[0].name}  ${user.interests[1].name}  ${user.interests[2].name}`
       : "";
 
-  const gamesPlayed = user.gamesFeels.filter(item => item.played);
+  const gamesPlayed = user.gameFeels.length;
 
   const marginTop = scrollY.interpolate({
     inputRange: [0, 200],
@@ -113,7 +114,6 @@ const ProfileScreen: () => JSX.Element = () => {
   });
 
   useEffect(() => {
-    mainGameService();
     let newFavs = [...favorites];
     const userFavs: any[] = user.favorites;
     userFavs.map((item, index) => {
@@ -127,10 +127,23 @@ const ProfileScreen: () => JSX.Element = () => {
     setFavorites([...newFavs]);
   }, []);
 
-  const mainGameService = async () => {
-    const mainGamesResult = await getMainGame();
-    setRecentGames(mainGamesResult.data);
-  };
+  useEffect(() => {
+    let newDiary = [...diary];
+    const userDiary: any[] = user.diary;
+    userDiary.map((item, index) => {
+      newDiary[index] = {
+        id: item.id,
+        cover: {
+          image_id: item.game.imageId,
+        },
+        diary: {
+          review: item.review,
+          gameFeel: item.gameFeel,
+        },
+      };
+    });
+    setDiary([...newDiary]);
+  }, [user.diary]);
 
   const renderBackground = () => {
     return (
@@ -168,7 +181,7 @@ const ProfileScreen: () => JSX.Element = () => {
         </TouchableOpacity>
         <TouchableOpacity style={{ alignItems: "center", padding: 5, borderRadius: 15 }}>
           <Text style={styles.titleTab}>Games</Text>
-          <Text style={styles.numberTab}>{gamesPlayed.length}</Text>
+          <Text style={styles.numberTab}>{gamesPlayed}</Text>
         </TouchableOpacity>
         <TouchableOpacity style={{ alignItems: "center", padding: 5, borderRadius: 15 }}>
           <Text style={styles.titleTab}>Following</Text>
@@ -209,11 +222,17 @@ const ProfileScreen: () => JSX.Element = () => {
     return (
       <View style={{ marginTop: 16 }}>
         <GameList title={"Favorites"} games={favorites} />
-        {/* <GameList title={"Recent Activity"} games={recentGames} styleComponent={{ marginTop: 12 }} /> */}
       </View>
     );
   };
 
+  const renderActivity = () => {
+    return (
+      <View style={{ marginTop: 16 }}>
+        <GameList title={"Recent Activity"} games={diary} activity={true} />
+      </View>
+    );
+  };
   return (
     <View style={styles.container}>
       {renderBackground()}
@@ -243,6 +262,7 @@ const ProfileScreen: () => JSX.Element = () => {
         </View>
 
         {renderFavorites()}
+        {renderActivity()}
         <View style={{ paddingHorizontal: 22, paddingBottom: 20 }}>{renderBottomBar()}</View>
       </ScrollView>
     </View>

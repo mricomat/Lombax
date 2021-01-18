@@ -134,7 +134,11 @@ const CalendarModal: FC<IHeaderProps> = props => {
   }, [yearSelected]);
 
   const fillYears = () => {
-    const startYear = parseInt(moment().subtract(18, "years").format("YYYY"));
+    const startYear = parseInt(
+      startDate === moment().format("YYYY-MM-DD")
+        ? moment().format("YYYY-MM-DD")
+        : moment().subtract(18, "years").format("YYYY")
+    );
     const finishYear = startYear - 100;
     for (let i = startYear; i > finishYear; i--) {
       yearValues.push(i);

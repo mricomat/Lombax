@@ -3,6 +3,7 @@ import { StyleSheet, Animated, TouchableOpacity } from "react-native";
 
 import StarImg from "src/assets/icons/star";
 import HalfStarImg from "src/assets/icons/halfStar";
+import { colors } from "src/assets";
 
 const STAR_SIZE = 35;
 
@@ -49,7 +50,13 @@ export default class Star extends PureComponent {
             starStyle,
           ]}
         >
-          <HalfStarImg width={size || STAR_SIZE} height={size || STAR_SIZE} left={left} right={right} />
+          <HalfStarImg
+            width={size || STAR_SIZE}
+            height={size || STAR_SIZE}
+            left={left}
+            right={right}
+            color={colors.bluer70}
+          />
         </Animated.View>
       </TouchableOpacity>
     );

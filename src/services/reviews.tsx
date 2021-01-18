@@ -6,7 +6,6 @@ export const postReview = (body: IReview, record: boolean = false) => {
 };
 
 export const updateReview = (id: string, rating: number) => {
-  console.log(id, rating);
   return put("/review", { id, rating }, true);
 };
 

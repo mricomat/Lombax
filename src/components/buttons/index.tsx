@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
     borderRadius: dimensions.radius,
   },
   inactive: {
-    backgroundColor: colors.grey10,
+    backgroundColor: colors.grey50,
   },
   text: {
     ...fontStyle.titleMed,
@@ -60,7 +60,7 @@ const SimpleButton: FC<IProps> = props => {
   const textComponent = (
     <>
       {Icon && <Icon style={{ marginEnd: 8 }} />}
-      <Text style={[styles.text, { color }, fontStyles, inactive && { color: colors.grey30 }]}>{title}</Text>
+      <Text style={[styles.text, { color }, fontStyles]}>{title}</Text>
     </>
   );
 

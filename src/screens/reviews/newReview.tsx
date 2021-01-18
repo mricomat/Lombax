@@ -1,19 +1,25 @@
-import React, { useState } from "react";
+import moment from "moment";
+import React, { useState, useEffect } from "react";
 import { Animated, Image, KeyboardAvoidingView, ScrollView, StyleSheet, Text, View } from "react-native";
+import lodash from "lodash";
 
 import { dimensions, fontStyle } from "src/assets";
 import colors from "src/assets/colors";
-import AgendaImg from "src/assets/icons/agenda.svg";
-import GameImg from "src/assets/icons/game.svg";
-import HeartImg from "src/assets/icons/heart";
+import GameImg from "src/assets/icons/game";
 import Button from "src/components/buttons";
 import Header from "src/components/headers";
 import Input from "src/components/inputs/simple";
-import Stars from "src/components/stars";
+import CalendarModal from "src/components/modals/calendar";
+import TapRating from "src/components/tabRating";
+import { useForm } from "src/hooks/use-form";
 import useNavigation from "src/hooks/use-navigation";
 import IGame from "src/types/api";
+import { defReview } from "src/utils/defForm";
 import DeviceUtils from "src/utils/device";
 import { getImageUrl } from "src/utils/image";
+import { ReviewValidation } from "src/utils/validation";
+import { postReview } from "src/services/reviews";
+import useRootContext from "src/hooks/use-context";
 
 const styles = StyleSheet.create({
   component: {
@@ -61,12 +67,16 @@ const styles = StyleSheet.create({
 });
 
 const NewReviewScreen: React.FC<any> = ({ route }) => {
-  const [game, setGame] = useState<IGame>((route.params && route.params.game) || {});
-  const [value, setValue] = useState("");
-  const [value2, setValue2] = useState("");
+  const {
+    langState: [lang],
+    user: [user, setUser],
+  } = useRootContext();
 
-  //const [scrollY, setScrollY] = useState<any>(new Animated.Value(0));
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [game, setGame] = useState<IGame>((route.params && route.params.game) || {});
+  const [isLoading, setIsLoading] = useState(false);
+  const [showCalendarModal, setShowCalendarModal] = useState(false);
+  const [rating, setRating] = useState((route.params && route.params.rating) || 0);
+
   const navigation = useNavigation();
   const scrollY = new Animated.Value(0);
 
@@ -81,6 +91,55 @@ const NewReviewScreen: React.FC<any> = ({ route }) => {
     outputRange: [DeviceUtils.deviceSize.height * 0.6, 80],
     extrapolate: "clamp",
   });
+
+  const { values, errors, setErrors, messages, setMessages, updateForm, onSubmitForm } = useForm(
+    defReview,
+    ReviewValidation,
+    async () => {
+      const result = await postReview(
+        {
+          userId: user.id,
+          game,
+          summary: values.review,
+          rating,
+          dateFinished: moment(values.date).unix(),
+          timeToBeat: values.timeToBeat,
+        },
+        true
+      );
+      if (!result.error) {
+        // TODO set all info inside app
+        const review = result.data.review;
+        const diary = result.data.diary;
+        route.params.setRatingReview(review);
+        setUser({
+          ...user,
+          diary: [{ ...diary, review: review }, ...user.diary],
+          reviews: [diary.review, ...user.reviews],
+        });
+
+        navigation.goBack();
+      }
+      setIsLoading(false);
+    }
+  );
+
+  useEffect(() => {
+    Object.keys(errors).some(k => {
+      if (errors[k]) {
+        setIsLoading(false);
+      }
+    });
+  }, [errors]);
+
+  const checkIfEmpty = () => {
+    let isEmpty = false;
+    isEmpty = lodash.isEmpty(values, true);
+    if (!isEmpty && rating === 0) {
+      isEmpty = true;
+    }
+    return isEmpty;
+  };
 
   const renderBackground = () => {
     const uri = getImageUrl(game.screenshots && game.screenshots[0].image_id, "t_screenshot_big");
@@ -118,31 +177,73 @@ const NewReviewScreen: React.FC<any> = ({ route }) => {
     return <Image source={{ uri }} style={styles.cover} resizeMode={"contain"} />;
   };
 
+  const renderCalendarModal = () => {
+    return (
+      <CalendarModal
+        isVisible={showCalendarModal}
+        onBackPress={() => setShowCalendarModal(false)}
+        onAcceptPress={(date: string) => {
+          updateForm({ date: moment(date).format("DD/MM/YYYY") });
+          setShowCalendarModal(false);
+        }}
+        startDate={moment().format("YYYY-MM-DD")}
+        hasBackdrop
+        maxDate={moment().format("YYYY-MM-DD")}
+        minDate={moment().subtract(50, "years").format("YYYY-MM-DD")}
+        onChange={date => updateForm({ date })}
+      />
+    );
+  };
+
   const renderInfo = () => {
     return (
-      <View style={{ maxWidth: "52%" }}>
+      <View style={{ flex: 1, marginEnd: 30 }}>
         <View style={{ marginTop: 8 }}>
           <Text style={styles.title}>
-            {game.name} <Text style={styles.dateGame}>2017</Text>
+            {game.name}
+            {"   "}
+            {game.first_release_date && (
+              <Text style={styles.dateGame}>{moment.unix(game.first_release_date).format("YYYY")}</Text>
+            )}
           </Text>
           <Input
-            value={value}
-            onChangeText={text => setValue(text)}
-            placeholder={"Date finished"}
+            value={values.date}
+            placeholder={"Date finished *"}
             styleContent={{ marginTop: 16 }}
-            isError={false}
-            RightIcon={AgendaImg}
+            isCalendar={true}
+            errorText={messages.date}
+            isError={errors.date}
+            onChangeText={date => updateForm({ date })}
+            onPressCalendar={() => setShowCalendarModal(true)}
           />
           <Input
-            value={value}
-            onChangeText={text => setValue(text)}
-            placeholder={"Time to beated"}
+            value={values.timeToBeat}
+            onChangeText={timeToBeat => updateForm({ timeToBeat })}
+            placeholder={"Time to beat - hours"}
             styleContent={{ marginTop: 14 }}
             RightIcon={GameImg}
+            errorText={messages.timeToBeat}
+            isError={errors.timeToBeat}
           />
           <View style={{ flexDirection: "row", alignItems: "center", marginTop: 16 }}>
-            <Stars rating={90} width={25} height={21} />
-            <HeartImg width={22} height={18} style={{ marginStart: 16, marginTop: 1 }} fill={colors.grey65} />
+            <TapRating
+              showRating={false}
+              defaultRating={rating}
+              onFinishRating={(i, index, isSame) => {
+                // TODO REFACTOR DELETE
+                let rating = 0;
+                if (i === index && index == isSame) {
+                  rating = index;
+                } else if (index === i && isSame === -2) {
+                  rating = index + 1 - 0.5;
+                } else if (index !== i && isSame === -2) {
+                  rating = index + 1;
+                } else if (i == -1) {
+                  rating = index + 1;
+                }
+                setRating(rating);
+              }}
+            />
           </View>
         </View>
       </View>
@@ -161,15 +262,28 @@ const NewReviewScreen: React.FC<any> = ({ route }) => {
           <View style={{ paddingHorizontal: 22, flex: 1 }}>
             <Input
               styleContent={{ marginTop: 20 }}
-              value={value2}
-              onChangeText={text => setValue2(text)}
-              placeholder={"Add Review"}
+              value={values.review}
+              onChangeText={review => updateForm({ review })}
+              placeholder={"Add Review *"}
               isDescription={true}
+              errorText={messages.review}
+              isError={errors.review}
             />
-            <Button title={"Publish"} style={{ marginTop: 40, marginBottom: 20 }} />
+            <Button
+              title={"Publish"}
+              style={{ marginTop: 40, marginBottom: 20 }}
+              loading={isLoading}
+              disabled={isLoading}
+              inactive={checkIfEmpty()}
+              onPress={() => {
+                setIsLoading(true);
+                onSubmitForm();
+              }}
+            />
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
+      {renderCalendarModal()}
     </View>
   );
 };

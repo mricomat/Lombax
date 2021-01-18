@@ -13,6 +13,7 @@ import NewReviewScreen from "src/screens/reviews/newReview";
 import RegisterStack from "src/routes/register";
 import MosaicScreen from "src/screens/mosaic";
 import FavoriteSelection from "src/screens/favoriteSelection";
+import GameStatusScreen from "src/screens/gameStatus";
 import storange from "src/utils/storange";
 import { langType } from "src/types/context";
 import { IUser } from "src/types/api";
@@ -83,6 +84,7 @@ const App = () => {
         <RootStack.Screen name={routeNames.GameDetail} component={GameDetailScreen} options={DefaultOptions} />
         <RootStack.Screen name={routeNames.MosaicScreen} component={MosaicScreen} options={DefaultOptions} />
         <RootStack.Screen name={routeNames.FavoriteSelection} component={FavoriteSelection} options={DefaultOptions} />
+        <RootStack.Screen name={routeNames.GameStatus} component={GameStatusScreen} options={DefaultOptions} />
         <RootStack.Screen name={routeNames.ReviewDetail} component={ReviewDetailScreen} options={DefaultOptions} />
         <RootStack.Screen name={routeNames.NewReview} component={NewReviewScreen} options={DefaultOptions} />
         <RootStack.Screen name={routeNames.PlayerScreen} component={PlayerScreen} options={DefaultOptions} />

@@ -7,10 +7,10 @@ import Stars from "src/components/stars";
 import HeartImg from "src/assets/icons/heart";
 import RevImg from "src/assets/icons/rev.svg";
 import { ICover } from "src/types/api";
+import { getGameStatusSource } from "src/utils/constants";
 
 const styles = StyleSheet.create({
   container: {
-    justifyContent: "center",
     alignItems: "center",
   },
   image: {
@@ -26,6 +26,20 @@ const styles = StyleSheet.create({
     marginTop: 6,
     flexDirection: "row",
   },
+  gameStatusContainer: {
+    position: "absolute",
+    borderRadius: 50,
+    height: 28,
+    width: 28,
+    top: 5,
+    right: -5,
+  },
+  gameStatusImage: {
+    width: 30,
+    height: 30,
+    marginTop: 7,
+    marginLeft: -1,
+  },
 });
 
 export interface IGameItem extends ViewProps {
@@ -33,21 +47,35 @@ export interface IGameItem extends ViewProps {
   styleImage?: StyleProp<ImageStyle>;
   cover?: ICover;
   activity?: boolean;
+  diary?: any;
   disabled?: boolean;
   onPress?: () => void;
 }
 
-const GameItem: FC<IGameItem> = ({ styleComponent, cover, onPress, activity, styleImage, disabled = false }) => {
+const GameItem: FC<IGameItem> = ({ styleComponent, cover, onPress, activity, styleImage, disabled = false, diary }) => {
   const uri = getImageUrl(cover && cover.image_id, "t_cover_big_2x");
 
   return (
-    <TouchableOpacity style={[styles.container, styleComponent]} onPress={onPress} disabled={disabled}>
+    <TouchableOpacity
+      style={[styles.container, styleComponent, { paddingTop: activity ? 10 : 0 }]}
+      onPress={onPress}
+      disabled={disabled}
+    >
       <Image source={{ uri }} style={[styles.image, styleImage]} />
+      {activity && diary.gameFeel && diary.gameFeel.gameStatus && (
+        <View style={[styles.gameStatusContainer, { backgroundColor: colors.grey80 }]}>
+          <Image source={getGameStatusSource[diary.gameFeel.gameStatus]} style={styles.gameStatusImage} />
+        </View>
+      )}
       {activity && (
         <View style={styles.activityContainer}>
-          <Stars />
-          <RevImg style={{ marginTop: 2, marginStart: 4 }} />
-          <HeartImg style={{ marginTop: 0.7, marginStart: 4 }} fill={colors.red70} />
+          {diary.review && diary.review.rating && (
+            <Stars rating={diary.review.rating} styleComponent={{ marginEnd: 4 }} />
+          )}
+          {diary.review && diary.review.summary !== "" && <RevImg style={{ marginTop: 2, marginStart: 2 }} />}
+          {diary.gameFeel && diary.gameFeel.like && (
+            <HeartImg style={{ marginTop: 0.7, marginStart: 4 }} fill={colors.red70} />
+          )}
         </View>
       )}
     </TouchableOpacity>

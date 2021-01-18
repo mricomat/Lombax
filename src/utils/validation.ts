@@ -87,6 +87,13 @@ export class InfoRegisterValidation {
   public password: string;
 }
 
+export class ReviewValidation {
+  public date: string;
+
+  public timeToBeat: string;
+
+  public review: string;
+}
 // export const isValidPhone = (number: string, region = 'ZZ') => validator.isPhoneNumber(number, region);
 
 // export class EmailValidation {

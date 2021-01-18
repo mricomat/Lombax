@@ -17,15 +17,25 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     marginStart: 20,
   },
+  empty: {
+    borderWidth: 0.3,
+    borderColor: colors.grey10,
+    borderRadius: 10,
+    backgroundColor: colors.grey50,
+    height: 184,
+    width: 135,
+    marginRight: 10,
+  },
 });
 
 export interface IGameList extends ViewProps {
   styleComponent?: StyleProp<ViewStyle>;
   title?: string;
   games?: IGame[];
+  activity?: boolean;
 }
 
-const GameList: FC<IGameList> = ({ styleComponent, games = [], title }) => {
+const GameList: FC<IGameList> = ({ styleComponent, games = [], title, activity }) => {
   const navigation = useNavigation();
   const renderItem = ({ item, index }) => {
     return item.cover ? (
@@ -33,20 +43,12 @@ const GameList: FC<IGameList> = ({ styleComponent, games = [], title }) => {
         cover={item.cover}
         styleComponent={{ marginRight: 10 }}
         key={item.id + index}
+        diary={item.diary}
+        activity={activity}
         onPress={() => navigation.navigate(routeNames.GameDetail, { game: item })}
       />
     ) : (
-      <View
-        style={{
-          borderWidth: 0.3,
-          borderColor: colors.grey10,
-          borderRadius: 10,
-          backgroundColor: colors.grey50,
-          height: 184,
-          width: 135,
-          marginRight: 10,
-        }}
-      ></View>
+      <View style={styles.empty} />
     );
   };
 

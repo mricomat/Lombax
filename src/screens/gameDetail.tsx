@@ -6,7 +6,7 @@ import useNavigation, { routeNames } from "src/hooks/use-navigation";
 import colors, { gradients } from "src/assets/colors";
 import { dimensions, fontStyle } from "src/assets";
 import Header from "src/components/headers";
-import IGame, { IDataItem } from "src/types/api";
+import IGame, { IDataItem, IGameFeel } from "src/types/api";
 import DeviceUtils from "src/utils/device";
 import { getImageUrl } from "src/utils/image";
 import PlayImg from "src/assets/icons/play_v.svg";
@@ -15,8 +15,11 @@ import GameDetailTab from "src/components/gameDetailTab";
 import EditButton from "src/components/buttons/edit";
 import GameModal from "src/components/modals/gameModal";
 import { getGameById } from "src/services/games";
+import { getGameInfo } from "src/services/game";
 import { postReview, getUserGameReview, updateReview } from "src/services/reviews";
 import useRootContext from "src/hooks/use-context";
+import { gameStatusColors } from "src/utils/constants";
+import { postGameFeel } from "src/services/game";
 
 const styles = StyleSheet.create({
   component: {
@@ -143,6 +146,15 @@ const styles = StyleSheet.create({
     marginEnd: 22,
     marginBottom: 30,
   },
+  gameStatus: {
+    width: "98%",
+    height: 4,
+    alignSelf: "center",
+
+    borderRadius: 15,
+    marginTop: 12,
+    elevation: 1,
+  },
 });
 
 const GameDetail: React.FC<any> = ({ route }) => {
@@ -151,10 +163,11 @@ const GameDetail: React.FC<any> = ({ route }) => {
     user: [user, setUser],
   } = useRootContext();
   const [game, setGame] = useState<IGame>((route.params && route.params.game) || {});
-  //const [scrollY, setScrollY] = useState<any>(new Animated.Value(0));
   const [isLoading, setIsLoading] = useState<boolean>(route.params.isEmpty || false);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [ratingReview, setRatingReview] = useState<any>({});
+  const [like, setLike] = useState<boolean>(false);
+  const [gameFeel, setGameFeel] = useState<IGameFeel>();
   const navigation = useNavigation();
 
   const scrollY = new Animated.Value(0);
@@ -175,7 +188,7 @@ const GameDetail: React.FC<any> = ({ route }) => {
     if (isLoading) {
       getGameService();
     }
-    getUserReviewsService();
+    getGameInfoService();
   }, []);
 
   const getGameService = async () => {
@@ -184,12 +197,17 @@ const GameDetail: React.FC<any> = ({ route }) => {
     setIsLoading(false);
   };
 
-  const getUserReviewsService = async () => {
-    const result = await getUserGameReview(user.id, game.id);
+  const getGameInfoService = async () => {
+    const result = await getGameInfo(user.id, game.id);
     if (!result.error) {
       const reviews = result.data.reviews;
       if (reviews.length > 0) {
         setRatingReview(reviews[0]);
+      }
+      const gameFeel = result.data.gameFeel;
+      if (gameFeel) {
+        setGameFeel(gameFeel);
+        setLike(gameFeel.like);
       }
     }
   };
@@ -261,8 +279,16 @@ const GameDetail: React.FC<any> = ({ route }) => {
           setShowModal(false);
           navigation.navigate(routeNames.FavoriteSelection, { game });
         }}
+        playPress={() => {
+          setShowModal(false);
+          navigation.navigate(routeNames.GameStatus, { game, gameFeel, setGameFeel });
+        }}
         ratePress={rating => {
           sendRatingReview(rating);
+        }}
+        reviewPress={() => {
+          setShowModal(false);
+          navigation.navigate(routeNames.NewReview, { game, gameFeel, rating: ratingReview.rating, setRatingReview });
         }}
       />
     );
@@ -270,23 +296,28 @@ const GameDetail: React.FC<any> = ({ route }) => {
 
   const renderInfoContainer = () => {
     return (
-      <View style={styles.infoContainer}>
-        <View style={{ alignItems: "center", marginStart: 10 }}>
-          <Text style={styles.titleInfo}>Rating</Text>
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <StartImg fill={colors.blue50} style={{ marginEnd: 5, marginTop: 2.7 }} />
-            <Text style={styles.titleInfoDes}>{calculateRating(game.total_rating || 0)}</Text>
+      <>
+        <View style={styles.infoContainer}>
+          <View style={{ alignItems: "center", marginStart: 10 }}>
+            <Text style={styles.titleInfo}>Rating</Text>
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <StartImg fill={colors.blue50} style={{ marginEnd: 5, marginTop: 2.7 }} />
+              <Text style={styles.titleInfoDes}>{calculateRating(game.total_rating || 0)}</Text>
+            </View>
+          </View>
+          <View style={styles.centerContainer}>
+            <Text style={styles.titleInfo}>Time to beat</Text>
+            <Text style={styles.titleInfoDes}>30 to 40h</Text>
+          </View>
+          <View style={{ alignItems: "center" }}>
+            <Text style={styles.titleInfo}>Date</Text>
+            <Text style={styles.titleInfoDes}>{moment.unix(game.release_dates[0].date).format("MMM DD YYYY")}</Text>
           </View>
         </View>
-        <View style={styles.centerContainer}>
-          <Text style={styles.titleInfo}>Time to beat</Text>
-          <Text style={styles.titleInfoDes}>30 to 40h</Text>
-        </View>
-        <View style={{ alignItems: "center" }}>
-          <Text style={styles.titleInfo}>Date</Text>
-          <Text style={styles.titleInfoDes}>{moment.unix(game.release_dates[0].date).format("MMM DD YYYY")}</Text>
-        </View>
-      </View>
+        {gameFeel && gameFeel.gameStatus && (
+          <View style={[styles.gameStatus, { backgroundColor: gameStatusColors[gameFeel.gameStatus] }]} />
+        )}
+      </>
     );
   };
 
@@ -415,10 +446,29 @@ const GameDetail: React.FC<any> = ({ route }) => {
       <>
         {renderBackground()}
         <Animated.View style={{ marginTop: marginTop, paddingHorizontal: 22 }}>
-          <Header title={"Game Detail"} onBackPress={() => navigation.goBack()} styleComponent={{ height: 80 }} />
+          <Header
+            title={"Game Detail"}
+            onBackPress={() => navigation.goBack()}
+            styleComponent={{ height: 80 }}
+            gameStatus={gameFeel?.gameStatus}
+            like={like}
+            onHeartPress={() => {
+              setLike(!like);
+              saveLike();
+            }}
+            onGamePress={() => navigation.navigate(routeNames.GameStatus, { game, gameFeel, setGameFeel })}
+          />
         </Animated.View>
       </>
     );
+  };
+
+  const saveLike = async () => {
+    const result = await postGameFeel(user.id, game, gameFeel ? !gameFeel.like : true, gameFeel?.gameStatus);
+
+    if (!result.error) {
+      setGameFeel(result.data.gameFeel);
+    }
   };
 
   return (
