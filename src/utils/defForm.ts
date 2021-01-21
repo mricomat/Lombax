@@ -39,9 +39,9 @@ export const defUser: IUser = {
 };
 
 export const defReview = {
-  date: false ? "10/09/1993" : "",
-  timeToBeat: false ? "40" : "",
-  review: false
+  date: isDebug ? "10/09/1993" : "",
+  timeToBeat: isDebug ? "40" : "",
+  review: isDebug
     ? `"I am Solaire of Astora, an adherent to the Lord of Sunlight. Now that I am Undead, I have come to this great land, the birthplace of Lord Gwyn, to seek my very own sun!"\n\nSolaire of Astora`
     : "",
 };

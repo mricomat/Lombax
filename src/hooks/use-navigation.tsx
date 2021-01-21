@@ -27,6 +27,10 @@ export enum routeNames {
   MosaicScreen = "MosaicScreen",
   ProfileScreen = "ProfileScreen",
   SettingsScreen = "SettingsScreen",
+  UserProfile = "UserProfile",
+  ReviewsList = "ReviewsList",
+  GameFeels = "GameFeels",
+  FollowsList = "FollowsList",
 }
 
 export enum modalNames {

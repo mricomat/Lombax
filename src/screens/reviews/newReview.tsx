@@ -116,6 +116,7 @@ const NewReviewScreen: React.FC<any> = ({ route }) => {
           ...user,
           diary: [{ ...diary, review: review }, ...user.diary],
           reviews: [diary.review, ...user.reviews],
+          counts: { ...user.counts, reviewsCount: user.counts.reviewsCount + 1 },
         });
 
         navigation.goBack();
@@ -131,15 +132,6 @@ const NewReviewScreen: React.FC<any> = ({ route }) => {
       }
     });
   }, [errors]);
-
-  const checkIfEmpty = () => {
-    let isEmpty = false;
-    isEmpty = lodash.isEmpty(values, true);
-    if (!isEmpty && rating === 0) {
-      isEmpty = true;
-    }
-    return isEmpty;
-  };
 
   const renderBackground = () => {
     const uri = getImageUrl(game.screenshots && game.screenshots[0].image_id, "t_screenshot_big");
@@ -274,7 +266,6 @@ const NewReviewScreen: React.FC<any> = ({ route }) => {
               style={{ marginTop: 40, marginBottom: 20 }}
               loading={isLoading}
               disabled={isLoading}
-              inactive={checkIfEmpty()}
               onPress={() => {
                 setIsLoading(true);
                 onSubmitForm();

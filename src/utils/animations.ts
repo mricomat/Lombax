@@ -15,11 +15,11 @@ const cardStyleInterpolator: StackCardStyleInterpolator = ({ current }) => {
 
 const stackOptions: stackOptionType = {
   headerShown: false,
-  animationTypeForReplace: "pop",
-  animationEnabled: true,
+  // animationTypeForReplace: "pop",
+  // animationEnabled: true,
   // TransitionSpecs.RevealFromBottomAndroidSpec, TransitionSpecs.FadeInFromBottomAndroidSpec,
   // transitionSpec: { open: transition, close: transition },
-  cardStyleInterpolator,
+  //cardStyleInterpolator,
 };
 
 const AnimationUtils = {

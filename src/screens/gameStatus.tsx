@@ -113,7 +113,7 @@ const GameStatus: React.FC<any> = ({ route }) => {
   const saveStatus = async () => {
     setIsLoading(true);
 
-    const result = await postGameFeel(user.id, game, gameFeel.like, selected);
+    const result = await postGameFeel(user.id, game, gameFeel && gameFeel.like, selected);
 
     if (!result.error) {
       route.params.setGameFeel(result.data.gameFeel);
@@ -131,7 +131,7 @@ const GameStatus: React.FC<any> = ({ route }) => {
           <TouchableOpacity style={{ width: "50%" }} onPress={() => setSelected(GameTypes.WantPlay)}>
             {selected === GameTypes.WantPlay && <View style={styles.selectedBack} />}
             <Image source={PlayingImg} style={{ transform: [{ scale: 0.8 }], marginStart: 2 }} />
-            <Text style={styles.itemTitle}>Playing</Text>
+            <Text style={styles.itemTitle}>Want to Play</Text>
           </TouchableOpacity>
           <TouchableOpacity style={{ width: "50%" }} onPress={() => setSelected(GameTypes.Playing)}>
             {selected === GameTypes.Playing && <View style={styles.selectedBack} />}
@@ -143,19 +143,19 @@ const GameStatus: React.FC<any> = ({ route }) => {
           <TouchableOpacity style={{ width: "50%" }} onPress={() => setSelected(GameTypes.Beaten)}>
             {selected === GameTypes.Beaten && <View style={styles.selectedBack} />}
             <Image source={BeatenImg} style={{ transform: [{ scale: 0.74 }], marginTop: -8, marginRight: -10 }} />
-            <Text style={styles.itemTitle}>Playing</Text>
+            <Text style={styles.itemTitle}>Beaten</Text>
           </TouchableOpacity>
           <TouchableOpacity style={{ width: "50%" }} onPress={() => setSelected(GameTypes.Completed)}>
             {selected === GameTypes.Completed && <View style={styles.selectedBack} />}
             <Image source={CompletedImg} style={{ transform: [{ scale: 0.8 }], marginTop: 0 }} />
-            <Text style={styles.itemTitle}>Playing</Text>
+            <Text style={styles.itemTitle}>Completed</Text>
           </TouchableOpacity>
         </View>
         <View style={{ flexDirection: "row", marginTop: 40 }}>
           <TouchableOpacity style={{ width: "50%" }} onPress={() => setSelected(GameTypes.Abandoned)}>
             {selected === GameTypes.Abandoned && <View style={styles.selectedBack} />}
             <Image source={AbandonedImg} style={{ transform: [{ scale: 0.8 }] }} />
-            <Text style={styles.itemTitle}>Playing</Text>
+            <Text style={styles.itemTitle}>Abandoned</Text>
           </TouchableOpacity>
         </View>
 

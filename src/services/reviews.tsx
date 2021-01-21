@@ -12,3 +12,7 @@ export const updateReview = (id: string, rating: number) => {
 export const getUserGameReview = (userId: string, gameId: number) => {
   return get("/review/user/game", { userId, gameId }, true);
 };
+
+export const getUserReviews = (id: string, offset: number) => {
+  return get("/reviews/user", { id, offset });
+};

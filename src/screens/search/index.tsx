@@ -1,9 +1,10 @@
 import React, { useEffect, useState, useRef } from "react";
-import { StyleSheet, View, ScrollView, Animated, Text, TouchableOpacity } from "react-native";
+import { StyleSheet, View, ScrollView, Animated, Text, TouchableOpacity, Image } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 import Swiper from "react-native-swiper";
 import LinearGradient from "react-native-linear-gradient";
 import lodash from "lodash";
+import { PacmanIndicator } from "react-native-indicators";
 
 import { colors, dimensions, fontStyle } from "src/assets";
 import SearchInput from "src/components/inputs/search";
@@ -11,14 +12,16 @@ import InterestList from "src/components/interestList";
 import { genresThemesInfo } from "src/constants/genres";
 import { platformsWithImage } from "src/constants/platforms";
 import { searchGames, searchHighGames } from "src/services/games";
+import { getUsers } from "src/services/users";
 import FilterImg from "src/assets/icons/filter.svg";
 import LoopImg from "src/assets/icons/loop.svg";
 import EmptyContainer from "src/components/empty";
-import { PacmanIndicator } from "react-native-indicators";
 import ResultSearch from "src/screens/search/resultSearch";
-import IGame from "src/types/api";
+import IGame, { IUser } from "src/types/api";
 import DeviceUtils from "src/utils/device";
 import FiltersModal from "src/components/modals/filtersModal";
+import { getCoverUrl } from "src/utils/image";
+import useNavigation, { routeNames } from "src/hooks/use-navigation";
 
 const styles = StyleSheet.create({
   container: {
@@ -77,6 +80,24 @@ const styles = StyleSheet.create({
     borderWidth: 5,
     borderColor: colors.grey80,
   },
+  userContainer: {
+    backgroundColor: colors.grey50,
+    width: "100%",
+    marginBottom: 12,
+    borderRadius: 15,
+    height: 75,
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    elevation: 1,
+  },
+  coverUser: {
+    height: 55,
+    width: 55,
+    borderRadius: 60,
+    borderWidth: 0.7,
+    borderColor: colors.blue20,
+  },
 });
 
 const screenWitdh = DeviceUtils.deviceSize.width;
@@ -89,11 +110,14 @@ const SearchScreen = ({}) => {
   const [isScrollEnabled, setIsScrollEnable] = useState<boolean>(true);
   const [hasSearch, setHasSearch] = useState<boolean>(false);
   const [searchResult, setSearchResult] = useState<IGame[]>([]);
+  const [usersResult, setUsersResult] = useState<IUser[]>([]);
   const [highResult, setHighResult] = useState<IGame[]>([]);
   const [showModal, setShowModal] = useState<boolean>(false);
+  const [switchState, setSwitchState] = useState<number>(0);
 
   const scrollY = useRef(new Animated.Value(0)).current;
   const scrollView = React.createRef();
+  const navigation = useNavigation();
 
   const marginTop = scrollY.interpolate({
     inputRange: [0, 200],
@@ -116,6 +140,9 @@ const SearchScreen = ({}) => {
   useEffect(() => {
     if (textValue.length > 0 && isScrollEnabled) {
       initAnimation();
+    }
+    if (switchState === 1) {
+      searchUsers();
     }
   }, [textValue]);
 
@@ -146,6 +173,11 @@ const SearchScreen = ({}) => {
     setSearchResult(lodash.uniqBy([...result.data], "id"));
     setHighResult(lodash.uniqBy([...highGamesRes.data], "id"));
     setIsLoading(false);
+  };
+
+  const searchUsers = async () => {
+    const result = await getUsers(textValue);
+    setUsersResult([...result.data.users]);
   };
 
   const onEndReached = async (offset: number) => {
@@ -216,15 +248,17 @@ const SearchScreen = ({}) => {
     const hasLoop = textValue.length > 0 || selections.length > 0;
     return (
       <>
-        <TouchableOpacity
-          style={[styles.button, { left: hasLoop ? screenWitdh * 0.33 : undefined }]}
-          onPress={() => setShowModal(true)}
-        >
-          <FilterImg />
-        </TouchableOpacity>
-        {hasLoop && (
+        {switchState === 0 && (
           <TouchableOpacity
-            style={[styles.button, { right: hasLoop ? screenWitdh * 0.33 : undefined }]}
+            style={[styles.button, { left: hasLoop ? screenWitdh * 0.33 : undefined }]}
+            onPress={() => setShowModal(true)}
+          >
+            <FilterImg />
+          </TouchableOpacity>
+        )}
+        {hasLoop && switchState === 0 && (
+          <TouchableOpacity
+            style={[styles.button, { right: hasLoop && switchState === 0 ? screenWitdh * 0.33 : undefined }]}
             onPress={() => searchService()}
           >
             <LoopImg />
@@ -239,32 +273,96 @@ const SearchScreen = ({}) => {
     setHasSearch(false);
     setSearchResult([]);
     setTextValue("");
-    removeAnimation();
+    switchState !== 1 && removeAnimation();
+  };
+
+  const renderSwiper = () => {
+    return (
+      <Swiper
+        style={[{ backgroundColor: colors.grey80 }, index === 1 ? { height: 2000 } : { height: 700 }]}
+        index={index}
+        showsHorizontalScrollIndicator={false}
+        onIndexChanged={index => setIndex(index)}
+      >
+        <View style={[styles.slide1, { marginTop: selections.length === 0 ? 20 : 10 }]}>
+          <InterestList
+            data={platformsWithImage}
+            styleComponent={{}}
+            title={"Platforms"}
+            onPressItem={item => setNewSelection(item)}
+          />
+        </View>
+        <View style={[styles.slide1, { marginTop: selections.length === 0 ? 20 : 10 }]}>
+          <InterestList
+            data={genresThemesInfo}
+            styleComponent={{}}
+            title={"Genres & Themes"}
+            onPressItem={item => setNewSelection(item)}
+          />
+        </View>
+      </Swiper>
+    );
+  };
+
+  const renderUserItem = ({ item }) => {
+    const uri = getCoverUrl(item.coverId);
+    return (
+      <TouchableOpacity
+        style={styles.userContainer}
+        onPress={() => navigation.navigate(routeNames.UserProfile, { user: { ...item, id: item._id } })}
+      >
+        <Image style={styles.coverUser} source={{ uri }} />
+        <View style={{ marginStart: 16 }}>
+          <Text style={{ ...fontStyle.titleMed, color: colors.white }}>{item.name}</Text>
+          <Text style={{ ...fontStyle.titleMed, color: colors.grey60, marginTop: 2 }}>{item.username}</Text>
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
+  const renderUserList = () => {
+    return (
+      <FlatList
+        data={usersResult}
+        renderItem={renderUserItem}
+        contentContainerStyle={{ paddingHorizontal: 22, paddingTop: 20 }}
+      />
+    );
   };
 
   return (
     <View style={styles.container}>
       {renderHeader()}
-      <Animated.View style={{ transform: [{ translateY: isScrollEnabled ? marginTop : -90 }], marginTop: 25 }}>
+      <Animated.View
+        style={{ transform: [{ translateY: isScrollEnabled ? marginTop : -90 }], marginTop: 25, height: "100%" }}
+      >
         <View style={{ paddingHorizontal: 22 }}>
           <SearchInput
             value={textValue}
+            placeholder={switchState === 0 ? "Find all games & collections" : "Find users"}
             onChangeText={text => setTextValue(text)}
             isSearch={textValue.length > 0 || selections.length > 0}
             onPressCancel={resetInput}
+            onPressSwitch={() => {
+              initAnimation();
+              setSwitchState(switchState < 2 ? switchState + 1 : 0);
+            }}
             onBlurCall={() => {
               if (textValue.length === 0 && !isScrollEnabled && !hasSearch) {
-                removeAnimation();
+                switchState !== 1 && removeAnimation();
               }
             }}
           />
         </View>
+
         {selections.length > 0 && renderSelections()}
         <Animated.ScrollView
           ref={scrollView}
           onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], { useNativeDriver: true })}
           showsVerticalScrollIndicator={false}
           nestedScrollEnabled
+          style={{ height: switchState === 1 ? "100%" : undefined }}
+          contentContainerStyle={{ height: switchState === 1 ? "100%" : undefined }}
         >
           {!isLoading && hasSearch && searchResult.length > 0 && (
             <ResultSearch
@@ -280,36 +378,13 @@ const SearchScreen = ({}) => {
             <View style={{ height: 400 }}>
               <PacmanIndicator color="white" size={30} />
             </View>
+          ) : !hasSearch && switchState === 0 ? (
+            renderSwiper()
           ) : (
-            !hasSearch && (
-              <Swiper
-                style={[{ backgroundColor: colors.grey80 }, index === 1 ? { height: 2000 } : { height: 700 }]}
-                index={index}
-                showsHorizontalScrollIndicator={false}
-                onIndexChanged={index => setIndex(index)}
-              >
-                <View style={[styles.slide1, { marginTop: selections.length === 0 ? 20 : 10 }]}>
-                  <InterestList
-                    data={platformsWithImage}
-                    styleComponent={{}}
-                    title={"Platforms"}
-                    onPressItem={item => setNewSelection(item)}
-                  />
-                </View>
-                <View style={[styles.slide1, { marginTop: selections.length === 0 ? 20 : 10 }]}>
-                  <InterestList
-                    data={genresThemesInfo}
-                    styleComponent={{}}
-                    title={"Genres & Themes"}
-                    onPressItem={item => setNewSelection(item)}
-                  />
-                </View>
-              </Swiper>
-            )
+            renderUserList()
           )}
         </Animated.ScrollView>
       </Animated.View>
-
       {renderButtons()}
       <FiltersModal showModal={showModal} setShowModal={setShowModal} />
     </View>

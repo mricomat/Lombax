@@ -4,14 +4,12 @@ import moment from "moment";
 import useNavigation, { routeNames } from "src/hooks/use-navigation";
 import LinearGradient from "react-native-linear-gradient";
 
-import colors, { gradients } from "src/assets/colors";
+import colors from "src/assets/colors";
 import { dimensions, fontStyle } from "src/assets";
 import Header from "src/components/headers";
-import IGame, { IDataItem } from "src/types/api";
 import DeviceUtils from "src/utils/device";
-import { getImageUrl } from "src/utils/image";
+import { getCoverUrl, getImageUrl } from "src/utils/image";
 import Stars from "src/components/stars";
-import { getGameById } from "src/services/games";
 import HeartImg from "src/assets/icons/heart";
 import PencilImage from "src/assets/icons/pencil";
 
@@ -49,6 +47,8 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     height: 40,
     width: 40,
+    borderWidth: 0.7,
+    borderColor: colors.grey30,
   },
   userTitle: {
     ...fontStyle.titleMed,
@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
   summary: {
     marginTop: 20,
     ...fontStyle.titleMed,
-    color: colors.grey30,
+    color: colors.grey10,
     lineHeight: 20,
     paddingHorizontal: 22,
   },
@@ -116,10 +116,8 @@ const styles = StyleSheet.create({
 });
 
 const ReviewDetail: React.FC<any> = ({ route }) => {
-  const [game, setGame] = useState<IGame>((route.params && route.params.game) || {});
+  const [review, setReView] = useState<any>((route.params && route.params.review) || {});
   const [heightView, setHeightView] = useState<number>(DeviceUtils.deviceSize.height * 0.6);
-  //const [scrollY, setScrollY] = useState<any>(new Animated.Value(0));
-  const [isLoading, setIsLoading] = useState<boolean>(route.params.isEmpty || false);
   const navigation = useNavigation();
 
   const scrollY = new Animated.Value(0);
@@ -136,20 +134,8 @@ const ReviewDetail: React.FC<any> = ({ route }) => {
     extrapolate: "clamp",
   });
 
-  useEffect(() => {
-    if (isLoading) {
-      getGameService();
-    }
-  }, []);
-
-  const getGameService = async () => {
-    const { data } = await getGameById(game.id);
-    setGame(data[0]);
-    setIsLoading(false);
-  };
-
   const renderBackground = () => {
-    const uri = getImageUrl(game.screenshots && game.screenshots[0].image_id, "t_screenshot_big");
+    const uri = getImageUrl(review.game.backgroundId, "t_screenshot_big");
     return (
       <Animated.View style={[styles.backgroundContainer, { height: heightBack }]}>
         <Animated.Image
@@ -163,28 +149,34 @@ const ReviewDetail: React.FC<any> = ({ route }) => {
   };
 
   const renderCover = () => {
-    const uri = getImageUrl(game.cover && game.cover.image_id, "t_cover_big");
+    const uri = getImageUrl(review.game.imageId, "t_cover_big");
     return <Image source={{ uri }} style={styles.cover} resizeMode={"contain"} />;
   };
 
   const renderInfo = () => {
-    const uri = getImageUrl(game.cover && game.cover.image_id, "t_cover_big");
+    const uri = getCoverUrl(review.user.coverId);
     return (
       <View style={{ maxWidth: "52%" }}>
         <View style={styles.flexRow}>
           <Image source={{ uri }} style={styles.useravatar} resizeMode={"cover"} />
-          <Text style={styles.userTitle}>Martin Rico</Text>
+          <Text style={styles.userTitle}>{review.user.name}</Text>
         </View>
         <View style={{ marginTop: 16 }}>
           <Text style={styles.title}>
-            {game.name} <Text style={styles.dateGame}>2017</Text>
+            {review.game.name}{" "}
+            <Text style={styles.dateGame}> {moment(review.game.releaseDate * 1000).format("YYYY")}</Text>
           </Text>
         </View>
-        <View style={{ justifyContent: "flex-start", marginTop: 16 }}>
-          <Stars rating={90} width={15} height={13} />
-        </View>
-        <Text style={{ ...fontStyle.titleMed, color: colors.grey65, marginTop: 12 }}>Finished september 2018</Text>
-        <Text style={{ ...fontStyle.titleMed, color: colors.grey65, marginTop: 12 }}>
+        {review.rating !== 0 && (
+          <View style={{ justifyContent: "flex-start", marginTop: 14 }}>
+            <Stars rating={review.rating} width={15} height={13} />
+          </View>
+        )}
+        <Text style={{ ...fontStyle.titleMed, color: colors.grey65, marginTop: 14 }}>
+          Finished at
+          <Text style={{ color: colors.white }}> {moment(review.dateFinished * 1000).format("MMMM DD, YYYY")}</Text>
+        </Text>
+        <Text style={{ ...fontStyle.titleMed, color: colors.grey65, marginTop: 14 }}>
           Time beated with <Text style={{ color: colors.white, fontSize: 15 }}> 40h</Text>
         </Text>
       </View>
@@ -194,7 +186,7 @@ const ReviewDetail: React.FC<any> = ({ route }) => {
   const renderSummary = () => {
     return (
       <LinearGradient colors={["rgba(0, 0, 0, 0.0)", "#171F25"]} style={{ borderRadius: 15, paddingBottom: 20 }}>
-        <Text style={styles.summary}>{game.summary}</Text>
+        <Text style={styles.summary}>{review.summary}</Text>
         {renderFeedBackBar()}
       </LinearGradient>
     );
@@ -225,10 +217,6 @@ const ReviewDetail: React.FC<any> = ({ route }) => {
         </View>
       </View>
     );
-  };
-
-  const calculateRating = (rating: number) => {
-    return ((rating / 100) * 5).toFixed(2);
   };
 
   const renderHeader = () => {

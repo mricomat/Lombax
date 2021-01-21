@@ -14,6 +14,10 @@ import RegisterStack from "src/routes/register";
 import MosaicScreen from "src/screens/mosaic";
 import FavoriteSelection from "src/screens/favoriteSelection";
 import GameStatusScreen from "src/screens/gameStatus";
+import UserProfileScreen from "src/screens/userProfile";
+import ReviewsListScreen from "src/screens/reviews/reviewsList";
+import GameFeelsScreen from "src/screens/gameFeels";
+import FollowsListScreen from "src/screens/followsList";
 import storange from "src/utils/storange";
 import { langType } from "src/types/context";
 import { IUser } from "src/types/api";
@@ -89,6 +93,10 @@ const App = () => {
         <RootStack.Screen name={routeNames.NewReview} component={NewReviewScreen} options={DefaultOptions} />
         <RootStack.Screen name={routeNames.PlayerScreen} component={PlayerScreen} options={DefaultOptions} />
         <RootStack.Screen name={routeNames.RegisterScreen} component={RegisterStack} options={DefaultOptions} />
+        <RootStack.Screen name={routeNames.UserProfile} component={UserProfileScreen} options={DefaultOptions} />
+        <RootStack.Screen name={routeNames.ReviewsList} component={ReviewsListScreen} options={DefaultOptions} />
+        <RootStack.Screen name={routeNames.GameFeels} component={GameFeelsScreen} options={DefaultOptions} />
+        <RootStack.Screen name={routeNames.FollowsList} component={FollowsListScreen} options={DefaultOptions} />
       </RootStack.Navigator>
     </RootContext.Provider>
   );

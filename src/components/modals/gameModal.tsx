@@ -106,7 +106,7 @@ const GameModal: FC<IGameModal> = ({
           <View style={styles.align}>
             <TouchableOpacity style={styles.circleContainer} onPress={favoritePress}>
               <View style={styles.circle} />
-              <StarImg fill={isFavorite ? colors.yellow80 : colors.white} height={28} width={30} />
+              <StarImg fill={isFavorite ? colors.yellow80 : colors.white} height={30} width={32} />
             </TouchableOpacity>
             <Text style={styles.title}>Favorite</Text>
           </View>
@@ -146,7 +146,7 @@ const GameModal: FC<IGameModal> = ({
               <View style={styles.circle} />
               <PencilImg />
             </TouchableOpacity>
-            <Text style={styles.title}>Review</Text>
+            <Text style={styles.title}>Review or Log</Text>
           </View>
           <View style={styles.align}>
             <TouchableOpacity style={styles.circleContainer}>

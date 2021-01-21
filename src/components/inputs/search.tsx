@@ -1,22 +1,9 @@
 import React, { FC, useState } from "react";
-import {
-  Image,
-  StyleProp,
-  StyleSheet,
-  TouchableOpacity,
-  ViewProps,
-  ViewStyle,
-  View,
-  Text,
-  TextInput,
-} from "react-native";
+import { StyleProp, StyleSheet, Text, TextInput, TouchableOpacity, View, ViewProps, ViewStyle } from "react-native";
 
-import { colors, dimensions, fontStyle } from "src/assets";
-import { getImageUrl } from "src/utils/image";
-import HeartImg from "src/assets/icons/heart";
-import ArroLeftImg from "src/assets/icons/arrow_left.svg";
+import { colors, fontStyle } from "src/assets";
 import CrossImg from "src/assets/icons/cross_search.svg";
-import { ICover } from "src/types/api";
+import SwitchImg from "src/assets/icons/switch.svg";
 
 const styles = StyleSheet.create({
   container: {
@@ -49,9 +36,11 @@ const styles = StyleSheet.create({
 export interface IInput extends ViewProps {
   styleComponent?: StyleProp<ViewStyle>;
   value?: string;
+  placeholder?: string;
   isSearch?: boolean;
   onPressCancel: () => void;
   onBlurCall: () => void;
+  onPressSwitch: () => void;
   onChangeText: (text: string) => void;
 }
 
@@ -62,6 +51,8 @@ const SearchInput: FC<IInput> = ({
   onPressCancel,
   onChangeText,
   onBlurCall,
+  onPressSwitch,
+  placeholder,
   ...others
 }) => {
   const [showInput, setShowInput] = useState(false);
@@ -93,12 +84,17 @@ const SearchInput: FC<IInput> = ({
         />
       ) : (
         <View style={styles.placeHolderContainer}>
-          <Text style={styles.placeholderText}>Find all games & collections</Text>
+          <Text style={styles.placeholderText}>{placeholder}</Text>
         </View>
       )}
       {isSearch && (
         <TouchableOpacity style={styles.cross} onPress={onPressCancel}>
           <CrossImg />
+        </TouchableOpacity>
+      )}
+      {!isSearch && (
+        <TouchableOpacity style={styles.cross} onPress={onPressSwitch}>
+          <SwitchImg />
         </TouchableOpacity>
       )}
     </TouchableOpacity>

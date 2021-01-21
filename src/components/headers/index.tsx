@@ -74,6 +74,17 @@ const styles = StyleSheet.create({
     borderRadius: dimensions.radiusCircle,
     backgroundColor: colors.red100,
   },
+
+  followContainer: {
+    height: 30,
+    backgroundColor: colors.grey50,
+    alignItems: "center",
+    borderRadius: 15,
+    justifyContent: "center",
+    borderWidth: 1,
+    borderColor: colors.white,
+    elevation: 1,
+  },
 });
 
 export interface IHeader extends ViewProps {
@@ -81,11 +92,15 @@ export interface IHeader extends ViewProps {
   title?: string;
   onBackPress?: () => void;
   onGamePress?: () => void;
+  onPressFollow?: () => void;
   onHeartPress?: () => void;
   playIcon?: boolean;
   profile?: boolean;
   heart?: boolean;
   like?: boolean;
+  isFollow?: boolean;
+  userProfile?: boolean;
+  following?: boolean;
   gameStatus?: string;
 }
 
@@ -99,8 +114,33 @@ const MainHeader: FC<IHeader> = ({
   onGamePress,
   gameStatus,
   onHeartPress,
+  onPressFollow,
+  isFollow = false,
+  following = false,
+  userProfile,
   like,
 }) => {
+  const renderFollowButton = () => {
+    return (
+      <View style={{ alignItems: "center", justifyContent: "center", marginEnd: 10 }}>
+        <TouchableOpacity
+          style={[
+            styles.followContainer,
+            {
+              marginTop: following ? 20 : 0,
+              paddingHorizontal: isFollow ? 12 : 18,
+              borderColor: isFollow ? colors.bluer70 : colors.white,
+            },
+          ]}
+          onPress={onPressFollow}
+        >
+          <Text style={{ color: colors.white, ...fontStyle.titleMed }}>{isFollow ? "Following" : "Follow"}</Text>
+        </TouchableOpacity>
+        {following && <Text style={{ color: colors.grey65, ...fontStyle.menuLabel, marginTop: 2 }}>Follows you</Text>}
+      </View>
+    );
+  };
+
   return (
     <Animated.View style={[styles.container, styleComponent]}>
       {profile && (
@@ -144,6 +184,7 @@ const MainHeader: FC<IHeader> = ({
             <AlertImg width={20} height={16} />
           </TouchableOpacity>
         )}
+        {userProfile && renderFollowButton()}
       </View>
     </Animated.View>
   );

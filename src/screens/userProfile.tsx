@@ -6,9 +6,13 @@ import GameList from "src/components/gameList";
 import Header from "src/components/headers";
 import AvatarItem from "src/components/items/avatarItem";
 import useNavigation, { routeNames } from "src/hooks/use-navigation";
-import { getCoverUrl } from "src/utils/image";
+import { getMainGame } from "src/services/games";
+import IGame, { IUser } from "src/types/api";
+import { getImageUrl, getCoverUrl } from "src/utils/image";
+import { follow, unFollow } from "src/services/users";
 import DeviceUtils from "src/utils/device";
 import useRootContext from "src/hooks/use-context";
+import { getUser } from "src/services/users";
 
 const styles = StyleSheet.create({
   container: {
@@ -71,31 +75,31 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginTop: 5,
   },
-  touchableInfo: {
-    alignItems: "center",
-    padding: 5,
-    borderRadius: 15,
-  },
 });
 
-const ProfileScreen: () => JSX.Element = () => {
+const UserProfile: React.FC<any> = ({ route }) => {
   const {
     langState: [lang],
-    user: [user],
+    user: [user, setUser],
   } = useRootContext();
   const [favorites, setFavorites] = useState<any[]>([{}, {}, {}, {}]);
+  const [userPr, setUserPr] = useState<IUser>(route.params && route.params.user);
   const [diary, setDiary] = useState<any[]>([{}, {}, {}, {}]);
+  const [isFollow, setIsFollow] = useState<boolean>(user.following.findIndex(item => item === userPr.id) !== -1);
+  const [following, setIsFollowing] = useState<boolean>(
+    userPr.following && userPr.following.findIndex(item => item === user.id) !== -1
+  );
   const [heightView, setHeightView] = useState<number>(DeviceUtils.deviceSize.height * 0.6);
 
   const scrollY = new Animated.Value(0);
   const navigation = useNavigation();
 
   const interests =
-    user.interests.length !== 0
-      ? `${user.interests[0].name}  ${user.interests[1].name}  ${user.interests[2].name}`
+    userPr.interests && userPr.interests.length !== 0
+      ? `${userPr.interests[0].name}  ${userPr.interests[1].name}  ${userPr.interests[2].name}`
       : "";
 
-  const gamesPlayed = user.counts && user.counts.gamesCount;
+  const gamesPlayed = userPr.counts && userPr.counts.gamesCount;
 
   const marginTop = scrollY.interpolate({
     inputRange: [0, 200],
@@ -116,8 +120,19 @@ const ProfileScreen: () => JSX.Element = () => {
   });
 
   useEffect(() => {
+    getUserInfo();
+  }, []);
+
+  const getUserInfo = async () => {
+    const res = await getUser(userPr.id);
+    if (!res.error) {
+      setUserPr(res.data.user);
+    }
+  };
+
+  useEffect(() => {
     let newFavs = [...favorites];
-    const userFavs: any[] = user.favorites;
+    const userFavs: any[] = userPr.favorites || [];
     userFavs.map((item, index) => {
       newFavs[index] = {
         id: item.id,
@@ -127,11 +142,11 @@ const ProfileScreen: () => JSX.Element = () => {
       };
     });
     setFavorites([...newFavs]);
-  }, []);
+  }, [userPr.favorites]);
 
   useEffect(() => {
     let newDiary = [...diary];
-    const userDiary: any[] = user.diary;
+    const userDiary: any[] = userPr.diary || [];
     userDiary.map((item, index) => {
       newDiary[index] = {
         id: item.id,
@@ -145,13 +160,13 @@ const ProfileScreen: () => JSX.Element = () => {
       };
     });
     setDiary([...newDiary]);
-  }, [user.diary]);
+  }, [userPr.diary]);
 
   const renderBackground = () => {
     return (
       <View style={{ position: "absolute", width: "100%", height: "100%" }}>
         <Animated.Image
-          source={{ uri: getCoverUrl(user.backgroundId) }}
+          source={{ uri: getCoverUrl(userPr.backgroundId) }}
           resizeMode={"cover"}
           style={[styles.image, { height: heightBack }]}
         />
@@ -163,12 +178,12 @@ const ProfileScreen: () => JSX.Element = () => {
   const renderTopInfo = () => {
     return (
       <View style={{ alignItems: "center" }}>
-        <Text style={styles.username}>{user.username}</Text>
-        <AvatarItem styleComponent={{ marginTop: 14 }} data={user.coverId} />
+        <Text style={styles.username}>{userPr.username}</Text>
+        <AvatarItem styleComponent={{ marginTop: 14 }} data={userPr.coverId} />
         <Text style={[styles.username, { marginTop: 12 }]}>Interested in</Text>
         <Text style={styles.interests}>{interests}</Text>
         <Text style={styles.description} numberOfLines={2}>
-          {user.description}
+          {userPr.description}
         </Text>
       </View>
     );
@@ -178,40 +193,48 @@ const ProfileScreen: () => JSX.Element = () => {
     return (
       <View style={styles.infoBar}>
         <TouchableOpacity
-          style={styles.touchableInfo}
+          style={{ alignItems: "center", padding: 5, borderRadius: 15 }}
           onPress={() =>
-            user.counts && user.counts.reviewsCount !== 0 ? navigation.navigate(routeNames.ReviewsList, { user }) : {}
+            userPr.counts && userPr.counts.reviewsCount !== 0
+              ? navigation.navigate(routeNames.ReviewsList, { user: userPr })
+              : {}
           }
         >
           <Text style={styles.titleTab}>Reviews</Text>
-          <Text style={styles.numberTab}>{(user.counts && user.counts.reviewsCount) || 0}</Text>
+          <Text style={styles.numberTab}>{(userPr.counts && userPr.counts.reviewsCount) || 0}</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={styles.touchableInfo}
+          style={{ alignItems: "center", padding: 5, borderRadius: 15 }}
           onPress={() =>
-            user.counts && user.counts.gamesCount !== 0 ? navigation.navigate(routeNames.GameFeels, { user }) : {}
+            userPr.counts && userPr.counts.gamesCount !== 0
+              ? navigation.navigate(routeNames.GameFeels, { user: userPr })
+              : {}
           }
         >
           <Text style={styles.titleTab}>Games</Text>
           <Text style={styles.numberTab}>{gamesPlayed}</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={styles.touchableInfo}
+          style={{ alignItems: "center", padding: 5, borderRadius: 15 }}
           onPress={() =>
-            user.following.length !== 0 ? navigation.navigate(routeNames.FollowsList, { user, isFollows: true }) : {}
+            userPr.following.length !== 0
+              ? navigation.navigate(routeNames.FollowsList, { user: userPr, isFollows: true }, user.id)
+              : {}
           }
         >
           <Text style={styles.titleTab}>Following</Text>
-          <Text style={styles.numberTab}>{user.following.length}</Text>
+          <Text style={styles.numberTab}>{(userPr.following && userPr.following.length) || 0}</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={styles.touchableInfo}
+          style={{ alignItems: "center", padding: 5, borderRadius: 15 }}
           onPress={() =>
-            user.followers.length !== 0 ? navigation.navigate(routeNames.FollowsList, { user, isFollows: false }) : {}
+            userPr.followers.length !== 0
+              ? navigation.navigate(routeNames.FollowsList, { user: userPr, isFollows: false }, user.id)
+              : {}
           }
         >
           <Text style={styles.titleTab}>Followers</Text>
-          <Text style={styles.numberTab}>{user.followers.length}</Text>
+          <Text style={styles.numberTab}>{(userPr.followers && userPr.followers.length) || 0}</Text>
         </TouchableOpacity>
       </View>
     );
@@ -220,21 +243,21 @@ const ProfileScreen: () => JSX.Element = () => {
   const renderBottomBar = () => {
     return (
       <View style={styles.infoBar}>
-        <TouchableOpacity style={styles.touchableInfo}>
+        <TouchableOpacity style={{ alignItems: "center", padding: 5, borderRadius: 15 }}>
           <Text style={styles.titleTab}>Diary</Text>
-          <Text style={styles.numberTab}>{(user.counts && user.counts.diaryCounts) || 0}</Text>
+          <Text style={styles.numberTab}>{(userPr.counts && userPr.counts.diaryCounts) || 0}</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.touchableInfo}>
+        <TouchableOpacity style={{ alignItems: "center", padding: 5, borderRadius: 15 }}>
           <Text style={styles.titleTab}>Likes</Text>
-          <Text style={styles.numberTab}>{(user.counts && user.counts.likesCount) || 0}</Text>
+          <Text style={styles.numberTab}>{(userPr.counts && userPr.counts.likesCount) || 0}</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.touchableInfo}>
+        <TouchableOpacity style={{ alignItems: "center", padding: 5, borderRadius: 15 }}>
           <Text style={styles.titleTab}>Playlists</Text>
-          <Text style={styles.numberTab}>0</Text>
+          <Text style={styles.numberTab}>32</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.touchableInfo}>
+        <TouchableOpacity style={{ alignItems: "center", padding: 5, borderRadius: 15 }}>
           <Text style={styles.titleTab}>Lists</Text>
-          <Text style={styles.numberTab}>0</Text>
+          <Text style={styles.numberTab}>17</Text>
         </TouchableOpacity>
       </View>
     );
@@ -256,17 +279,47 @@ const ProfileScreen: () => JSX.Element = () => {
     );
   };
 
+  const onFollowPress = async () => {
+    if (isFollow) {
+      setIsFollow(false);
+      await unFollow(user.id, userPr.id);
+      const newFollows: [] = [];
+      const indexFollow = user.following.indexOf(userPr.id);
+      if (indexFollow > -1) {
+        newFollows.splice(indexFollow, 1);
+      }
+      const newFollowers: [] = [];
+
+      const indexFollwers = user.following.indexOf(user.id);
+      if (indexFollwers > -1) {
+        newFollowers.splice(indexFollwers, 1);
+      }
+
+      setUser({ ...user, following: [...newFollows] });
+      setUserPr({ ...userPr, followers: [...newFollowers] });
+    } else {
+      setIsFollow(true);
+      await follow(user.id, userPr.id);
+      setUser({ ...user, following: [userPr.id, ...user.following] });
+      setUserPr({ ...userPr, followers: [user.id, ...userPr.followers] });
+    }
+  };
+
   return (
     <View style={styles.container}>
       {renderBackground()}
       <Animated.View style={{ marginTop: marginTop, paddingHorizontal: 14 }}>
         <Header
-          title={user.name}
+          title={userPr.name}
           playIcon={false}
           heart={false}
           styleComponent={{ height: heightHeader }}
-          onBackPress={() => navigation.navigate(routeNames.SettingsScreen)}
-          profile={true}
+          onBackPress={() => navigation.goBack()}
+          profile={false}
+          userProfile={true}
+          isFollow={isFollow}
+          following={following}
+          onPressFollow={onFollowPress}
         />
       </Animated.View>
 
@@ -292,4 +345,4 @@ const ProfileScreen: () => JSX.Element = () => {
   );
 };
 
-export default ProfileScreen;
+export default UserProfile;

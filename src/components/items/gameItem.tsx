@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     height: 28,
     width: 28,
-    top: 5,
+    top: -5,
     right: -5,
   },
   gameStatusImage: {
@@ -52,15 +52,19 @@ export interface IGameItem extends ViewProps {
   onPress?: () => void;
 }
 
-const GameItem: FC<IGameItem> = ({ styleComponent, cover, onPress, activity, styleImage, disabled = false, diary }) => {
+const GameItem: FC<IGameItem> = ({
+  styleComponent,
+  cover,
+  onPress,
+  activity,
+  styleImage,
+  disabled = false,
+  diary = {},
+}) => {
   const uri = getImageUrl(cover && cover.image_id, "t_cover_big_2x");
 
   return (
-    <TouchableOpacity
-      style={[styles.container, styleComponent, { paddingTop: activity ? 10 : 0 }]}
-      onPress={onPress}
-      disabled={disabled}
-    >
+    <TouchableOpacity style={[styles.container, styleComponent]} onPress={onPress} disabled={disabled}>
       <Image source={{ uri }} style={[styles.image, styleImage]} />
       {activity && diary.gameFeel && diary.gameFeel.gameStatus && (
         <View style={[styles.gameStatusContainer, { backgroundColor: colors.grey80 }]}>
@@ -69,7 +73,7 @@ const GameItem: FC<IGameItem> = ({ styleComponent, cover, onPress, activity, sty
       )}
       {activity && (
         <View style={styles.activityContainer}>
-          {diary.review && diary.review.rating && (
+          {diary.review && diary.review.rating !== 0 && (
             <Stars rating={diary.review.rating} styleComponent={{ marginEnd: 4 }} />
           )}
           {diary.review && diary.review.summary !== "" && <RevImg style={{ marginTop: 2, marginStart: 2 }} />}

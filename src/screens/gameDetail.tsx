@@ -464,10 +464,28 @@ const GameDetail: React.FC<any> = ({ route }) => {
   };
 
   const saveLike = async () => {
-    const result = await postGameFeel(user.id, game, gameFeel ? !gameFeel.like : true, gameFeel?.gameStatus);
+    const likeStatus = gameFeel ? !gameFeel.like : true;
+    const result = await postGameFeel(user.id, game, likeStatus, gameFeel?.gameStatus);
 
     if (!result.error) {
       setGameFeel(result.data.gameFeel);
+
+      if (likeStatus) {
+        // Increment gameFeel, add gameFeelId, increment Diary, add Diary
+        const diary = result.data.diary;
+        const gameFeel = result.data.gameFeel;
+        setUser({
+          ...user,
+          diary: [{ ...diary, gameFeel: { ...diary.gameFeel, like: true } }, ...user.diary],
+          gameFeels: [gameFeel._id, user.gameFeels],
+          counts: {
+            ...user.counts,
+            diaryCount: user.counts.diaryCount + 1,
+            gameFeelsCount: user.counts.gameFeelsCount + 1,
+            likesCount: (user.counts.likes || 0) + 1,
+          },
+        });
+      }
     }
   };
 

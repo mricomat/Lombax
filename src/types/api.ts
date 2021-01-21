@@ -14,6 +14,7 @@ export interface IUser {
   reviews: IReview[];
   gameFeels: IGameFeel[];
   diary: IDiary[];
+  counts: any;
 }
 
 export interface IKeyword {
