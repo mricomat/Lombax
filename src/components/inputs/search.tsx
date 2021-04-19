@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
   },
   textInput: {
     marginStart: 30,
-    color: colors.black,
+    color: colors.grey50,
     ...fontStyle.titleMed,
   },
   cross: {
@@ -38,10 +38,11 @@ export interface IInput extends ViewProps {
   value?: string;
   placeholder?: string;
   isSearch?: boolean;
-  onPressCancel: () => void;
-  onBlurCall: () => void;
-  onPressSwitch: () => void;
-  onChangeText: (text: string) => void;
+  showSwitch?: boolean;
+  onPressCancel?: () => void;
+  onBlurCall?: () => void;
+  onPressSwitch?: () => void;
+  onChangeText?: (text: string) => void;
 }
 
 const SearchInput: FC<IInput> = ({
@@ -53,6 +54,7 @@ const SearchInput: FC<IInput> = ({
   onBlurCall,
   onPressSwitch,
   placeholder,
+  showSwitch = true,
   ...others
 }) => {
   const [showInput, setShowInput] = useState(false);
@@ -64,7 +66,7 @@ const SearchInput: FC<IInput> = ({
   };
 
   const onBlur = () => {
-    onBlurCall();
+    onBlurCall && onBlurCall();
     if (!value) {
       setShowInput(false);
     }
@@ -79,8 +81,9 @@ const SearchInput: FC<IInput> = ({
           value={value}
           onBlur={onBlur}
           onEndEditing={() => onBlur()}
-          autoFocus={true}
-          onChangeText={text => onChangeText(text)}
+          autoFocus
+          selectionColor={colors.grey50}
+          onChangeText={text => onChangeText && onChangeText(text)}
         />
       ) : (
         <View style={styles.placeHolderContainer}>
@@ -92,7 +95,7 @@ const SearchInput: FC<IInput> = ({
           <CrossImg />
         </TouchableOpacity>
       )}
-      {!isSearch && (
+      {!isSearch && showSwitch && (
         <TouchableOpacity style={styles.cross} onPress={onPressSwitch}>
           <SwitchImg />
         </TouchableOpacity>

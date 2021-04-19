@@ -6,7 +6,7 @@ import useNavigation, { routeNames } from "src/hooks/use-navigation";
 import colors, { gradients } from "src/assets/colors";
 import { dimensions, fontStyle } from "src/assets";
 import Header from "src/components/headers";
-import IGame, { IDataItem, IGameFeel } from "src/types/api";
+import IGame, { GameStatus, IDataItem, IGameFeel } from "src/types/api";
 import DeviceUtils from "src/utils/device";
 import { getImageUrl } from "src/utils/image";
 import PlayImg from "src/assets/icons/play_v.svg";
@@ -166,7 +166,6 @@ const GameDetail: React.FC<any> = ({ route }) => {
   const [isLoading, setIsLoading] = useState<boolean>(route.params.isEmpty || false);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [ratingReview, setRatingReview] = useState<any>({});
-  const [like, setLike] = useState<boolean>(false);
   const [gameFeel, setGameFeel] = useState<IGameFeel>();
   const navigation = useNavigation();
 
@@ -207,22 +206,35 @@ const GameDetail: React.FC<any> = ({ route }) => {
       const gameFeel = result.data.gameFeel;
       if (gameFeel) {
         setGameFeel(gameFeel);
-        setLike(gameFeel.like);
       }
     }
   };
 
   const sendRatingReview = async (rating: number) => {
-    if (Object.keys(ratingReview).length < 0) {
-      postReview({
+    const result = await postReview(
+      {
         userId: user.id,
         rating,
         game,
-      });
-    } else {
-      const result = await updateReview(ratingReview._id, rating);
-      if (!result.error) {
-        setRatingReview(result.data.review);
+      },
+      GameStatus.Beaten
+    );
+    if (!result.error) {
+      setRatingReview(result.data.review);
+      setGameFeel(result.data.gameFeel);
+
+      // Add GameFeel to User
+      if (gameFeel) {
+        const newGameFeels = [...user.gameFeels];
+        setUser({ ...user, gameFeels: [result.data.gameFeel, ...user.gameFeels] });
+        const gameFeelIndex = user.gameFeels.indexOf(gameFeel._id);
+        if (gameFeelIndex > -1) {
+          newGameFeels.splice(gameFeelIndex, 1);
+        }
+
+        setUser({ ...user, gameFeels: [result.data.gameFeel, ...newGameFeels] });
+      } else {
+        setUser({ ...user, gameFeels: [result.data.gameFeel, ...user.gameFeels] });
       }
     }
   };
@@ -288,7 +300,13 @@ const GameDetail: React.FC<any> = ({ route }) => {
         }}
         reviewPress={() => {
           setShowModal(false);
-          navigation.navigate(routeNames.NewReview, { game, gameFeel, rating: ratingReview.rating, setRatingReview });
+          navigation.navigate(routeNames.NewReview, {
+            game,
+            gameFeel,
+            rating: ratingReview.rating,
+            setRatingReview,
+            setGameFeel,
+          });
         }}
       />
     );
@@ -451,42 +469,12 @@ const GameDetail: React.FC<any> = ({ route }) => {
             onBackPress={() => navigation.goBack()}
             styleComponent={{ height: 80 }}
             gameStatus={gameFeel?.gameStatus}
-            like={like}
-            onHeartPress={() => {
-              setLike(!like);
-              saveLike();
-            }}
+            heart={false}
             onGamePress={() => navigation.navigate(routeNames.GameStatus, { game, gameFeel, setGameFeel })}
           />
         </Animated.View>
       </>
     );
-  };
-
-  const saveLike = async () => {
-    const likeStatus = gameFeel ? !gameFeel.like : true;
-    const result = await postGameFeel(user.id, game, likeStatus, gameFeel?.gameStatus);
-
-    if (!result.error) {
-      setGameFeel(result.data.gameFeel);
-
-      if (likeStatus) {
-        // Increment gameFeel, add gameFeelId, increment Diary, add Diary
-        const diary = result.data.diary;
-        const gameFeel = result.data.gameFeel;
-        setUser({
-          ...user,
-          diary: [{ ...diary, gameFeel: { ...diary.gameFeel, like: true } }, ...user.diary],
-          gameFeels: [gameFeel._id, user.gameFeels],
-          counts: {
-            ...user.counts,
-            diaryCount: user.counts.diaryCount + 1,
-            gameFeelsCount: user.counts.gameFeelsCount + 1,
-            likesCount: (user.counts.likes || 0) + 1,
-          },
-        });
-      }
-    }
   };
 
   return (

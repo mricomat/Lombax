@@ -1,17 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { Animated, StyleSheet, View } from "react-native";
 import { PacmanIndicator } from "react-native-indicators";
-import lodash from "lodash";
 
 import { dimensions } from "src/assets";
 import colors from "src/assets/colors";
 import Header from "src/components/headers";
-import GameItem from "src/components/items/gameItem";
+import useRootContext from "src/hooks/use-context";
 import useNavigation, { routeNames } from "src/hooks/use-navigation";
-import { getGameFeels } from "src/services/game";
 import { IUser } from "src/types/api";
 import DeviceUtils from "src/utils/device";
 import { getCoverUrl } from "src/utils/image";
+import EditButton from "src/components/buttons/edit";
 
 const styles = StyleSheet.create({
   component: {
@@ -37,19 +36,23 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: dimensions.radiusBig,
     borderBottomLeftRadius: dimensions.radiusBig,
   },
-  cover: {
-    borderRadius: 10,
-    height: 160,
-    width: 130,
-    marginTop: 22,
-    alignSelf: "center",
+  editButton: {
+    position: "absolute",
+    bottom: 0,
+    right: 0,
+    marginEnd: 22,
+    marginBottom: 30,
   },
 });
 
-const GameFeels: React.FC<any> = ({ route }) => {
-  const [user, setUser] = useState<IUser>((route.params && route.params.user) || {});
-  const [games, setGames] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+const Lists: React.FC<any> = ({ route }) => {
+  const {
+    langState: [lang],
+    user: [user, setUser],
+  } = useRootContext();
+
+  const [userPr, setUserPr] = useState<IUser>((route.params && route.params.user) || {});
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isEnd, setIsEnd] = useState<boolean>(false);
 
   const navigation = useNavigation();
@@ -70,12 +73,13 @@ const GameFeels: React.FC<any> = ({ route }) => {
 
   useEffect(() => {
     if (isLoading) {
-      getGamesService();
     }
   }, []);
 
+  useEffect(() => {}, [user.following]);
+
   const renderBackground = () => {
-    const uri = getCoverUrl(user.backgroundId);
+    const uri = getCoverUrl(userPr.backgroundId);
     return (
       <Animated.View style={[styles.backgroundContainer, { height: heightBack }]}>
         <Animated.Image
@@ -88,24 +92,13 @@ const GameFeels: React.FC<any> = ({ route }) => {
     );
   };
 
-  const getGamesService = async () => {
-    const { data, error } = await getGameFeels(user.id, games.length);
-    if (!error) {
-      const gamesData = lodash.uniqBy([...games, ...data.gameFeels], (e: any) => {
-        return e.game.id;
-      });
-      data.count !== 0 ? setGames([...gamesData]) : setIsEnd(true);
-    }
-    setIsLoading(false);
-  };
-
   const renderHeader = () => {
     return (
       <>
         {renderBackground()}
         <Animated.View style={{ marginTop: marginTop, paddingHorizontal: 22 }}>
           <Header
-            title={`${user.name}'s Games`}
+            title={`${userPr.name}'s Follows`}
             onBackPress={() => navigation.goBack()}
             styleComponent={{ height: 80 }}
             playIcon={false}
@@ -116,26 +109,13 @@ const GameFeels: React.FC<any> = ({ route }) => {
     );
   };
 
-  const renderGameItem = ({ item, index }) => {
-    const width = (DeviceUtils.deviceSize.width - 65) / 3;
-    const height = DeviceUtils.deviceSize.height * 0.24;
-    return (
-      <GameItem
-        cover={{ image_id: item.game.imageId }}
-        styleComponent={{ marginTop: 10, marginEnd: 10 }}
-        key={item._id + index}
-        styleImage={{ height, width }}
-        diary={{ gameFeel: item }}
-        activity={true}
-        onPress={() => navigation.navigate(routeNames.GameDetail, { game: item, isEmpty: true }, item.id)}
-      />
-    );
+  const renderListItem = () => {
+    return <View />;
   };
 
   const onEndReached = () => {
     console.log("onEndReached");
     if (!isEnd) {
-      getGamesService();
     }
   };
 
@@ -148,21 +128,19 @@ const GameFeels: React.FC<any> = ({ route }) => {
         </View>
       )}
       {!isLoading && (
-        <View style={{ flex: 1 }}>
-          <Animated.FlatList
-            onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }])}
-            data={games}
-            showsVerticalScrollIndicator={false}
-            renderItem={renderGameItem}
-            onEndReachedThreshold={0.01}
-            numColumns={3}
-            onEndReached={() => onEndReached()}
-            contentContainerStyle={{ paddingHorizontal: 22, paddingTop: 10 }}
-          />
-        </View>
+        <Animated.FlatList
+          onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }])}
+          data={[]}
+          showsVerticalScrollIndicator={false}
+          renderItem={renderListItem}
+          onEndReachedThreshold={0.01}
+          onEndReached={() => onEndReached()}
+          contentContainerStyle={{ paddingHorizontal: 22, paddingTop: 10 }}
+        />
       )}
+      <EditButton styleComponent={styles.editButton} onPress={() => navigation.navigate(routeNames.NewList)} />
     </View>
   );
 };
 
-export default GameFeels;
+export default Lists;

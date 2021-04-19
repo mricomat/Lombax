@@ -49,7 +49,6 @@ export const getsevenDaysGames = async () => {
 
 export const searchGames = async search => {
   const offset = search.offset || 0;
-  console.log(offset);
   let where = await buildWhere(search);
   const today = moment();
   if (where !== ``) {
@@ -76,19 +75,17 @@ const buildWhere = async search => {
   let themes: any[] = [];
   let platforms: any[] = [];
 
-  await search.selections.map(sel => {
-    switch (sel.type) {
-      case "genres":
-        genres = [...genres, sel.id];
-        break;
-      case "themes":
-        themes = [...themes, sel.id];
-        break;
-      default:
-        platforms = [...platforms, sel.id];
-        break;
-    }
-  });
+  search.selections &&
+    (await search.selections.map(sel => {
+      switch (sel.type) {
+        case "genres":
+          genres = [...genres, sel.id];
+        case "themes":
+          themes = [...themes, sel.id];
+        default:
+          platforms = [...platforms, sel.id];
+      }
+    }));
 
   let where = ``;
   let isEmpty = true;
@@ -113,7 +110,7 @@ const buildWhere = async search => {
 
   if (search.name && search.name.length > 0) {
     isEmpty ? (where = `where `) : (where = where + ` & `);
-    where = where + ` name = "${search.name}"*`;
+    where = where + ` name ~ "${search.name}"*`;
   }
 
   if (where !== ``) {

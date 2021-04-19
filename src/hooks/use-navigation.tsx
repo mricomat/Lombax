@@ -31,6 +31,12 @@ export enum routeNames {
   ReviewsList = "ReviewsList",
   GameFeels = "GameFeels",
   FollowsList = "FollowsList",
+  Lists = "Lists",
+  ListsStack = "ListsStack",
+  GameSelectedList = "GameSelectedList",
+  SearchGame = "SearchGame",
+  DiaryList = "DiaryList",
+  NewList = "NewList",
 }
 
 export enum modalNames {

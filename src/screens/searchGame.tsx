@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { Animated, StyleSheet, View } from "react-native";
 import { PacmanIndicator } from "react-native-indicators";
-import lodash from "lodash";
 
 import { dimensions } from "src/assets";
 import colors from "src/assets/colors";
 import Header from "src/components/headers";
-import GameItem from "src/components/items/gameItem";
+import InputSearch from "src/components/inputs/search";
+import useRootContext from "src/hooks/use-context";
 import useNavigation, { routeNames } from "src/hooks/use-navigation";
-import { getGameFeels } from "src/services/game";
-import { IUser } from "src/types/api";
+import IGame, { IUser } from "src/types/api";
 import DeviceUtils from "src/utils/device";
 import { getCoverUrl } from "src/utils/image";
+import EditButton from "src/components/buttons/edit";
+import { searchGames } from "src/services/games";
+import GameSearchItem from "src/components/items/gameSearchItem";
 
 const styles = StyleSheet.create({
   component: {
@@ -37,19 +39,25 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: dimensions.radiusBig,
     borderBottomLeftRadius: dimensions.radiusBig,
   },
-  cover: {
-    borderRadius: 10,
-    height: 160,
-    width: 130,
-    marginTop: 22,
-    alignSelf: "center",
+  editButton: {
+    position: "absolute",
+    bottom: 0,
+    right: 0,
+    marginEnd: 22,
+    marginBottom: 30,
   },
 });
 
-const GameFeels: React.FC<any> = ({ route }) => {
-  const [user, setUser] = useState<IUser>((route.params && route.params.user) || {});
+const SearchGame: React.FC<any> = ({ route }) => {
+  const addGame = route.params && route.params.addGame;
+  const {
+    langState: [lang],
+    user: [user, setUser],
+  } = useRootContext();
+
   const [games, setGames] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [search, setSearch] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isEnd, setIsEnd] = useState<boolean>(false);
 
   const navigation = useNavigation();
@@ -64,15 +72,25 @@ const GameFeels: React.FC<any> = ({ route }) => {
 
   const heightBack = scrollY.interpolate({
     inputRange: [0, 200],
-    outputRange: [DeviceUtils.deviceSize.height, 80],
+    outputRange: [DeviceUtils.deviceSize.height, 140],
     extrapolate: "clamp",
   });
 
   useEffect(() => {
-    if (isLoading) {
+    if (search !== "") {
       getGamesService();
+    } else {
+      setGames([]);
     }
-  }, []);
+  }, [search]);
+
+  useEffect(() => {}, [user.following]);
+
+  const getGamesService = async (isMore: boolean = false) => {
+    const res = await searchGames({ offset: games.length, selections: null, name: search });
+    isMore ? setGames([...games, ...res.data]) : setGames([...res.data]);
+    res.data.length === 0 && setIsEnd(true);
+  };
 
   const renderBackground = () => {
     const uri = getCoverUrl(user.backgroundId);
@@ -88,24 +106,13 @@ const GameFeels: React.FC<any> = ({ route }) => {
     );
   };
 
-  const getGamesService = async () => {
-    const { data, error } = await getGameFeels(user.id, games.length);
-    if (!error) {
-      const gamesData = lodash.uniqBy([...games, ...data.gameFeels], (e: any) => {
-        return e.game.id;
-      });
-      data.count !== 0 ? setGames([...gamesData]) : setIsEnd(true);
-    }
-    setIsLoading(false);
-  };
-
   const renderHeader = () => {
     return (
       <>
         {renderBackground()}
         <Animated.View style={{ marginTop: marginTop, paddingHorizontal: 22 }}>
           <Header
-            title={`${user.name}'s Games`}
+            title={`Add Game`}
             onBackPress={() => navigation.goBack()}
             styleComponent={{ height: 80 }}
             playIcon={false}
@@ -116,18 +123,19 @@ const GameFeels: React.FC<any> = ({ route }) => {
     );
   };
 
-  const renderGameItem = ({ item, index }) => {
-    const width = (DeviceUtils.deviceSize.width - 65) / 3;
-    const height = DeviceUtils.deviceSize.height * 0.24;
+  const renderGameItem = ({ item }: { item: IGame }) => {
     return (
-      <GameItem
-        cover={{ image_id: item.game.imageId }}
-        styleComponent={{ marginTop: 10, marginEnd: 10 }}
-        key={item._id + index}
-        styleImage={{ height, width }}
-        diary={{ gameFeel: item }}
-        activity={true}
-        onPress={() => navigation.navigate(routeNames.GameDetail, { game: item, isEmpty: true }, item.id)}
+      <GameSearchItem
+        cover={item.cover}
+        name={item.name}
+        date={item.first_release_date}
+        rating={item.total_rating}
+        genres={item.genres}
+        styleComponent={{ marginBottom: 8 }}
+        onPress={() => {
+          addGame(item);
+          navigation.goBack();
+        }}
       />
     );
   };
@@ -135,34 +143,39 @@ const GameFeels: React.FC<any> = ({ route }) => {
   const onEndReached = () => {
     console.log("onEndReached");
     if (!isEnd) {
-      getGamesService();
+      getGamesService(true);
     }
   };
 
   return (
     <View style={styles.component}>
       {renderHeader()}
-      {isLoading && (
-        <View style={{ flex: 1, alignItems: "center", marginBottom: 100 }}>
-          <PacmanIndicator color="white" size={40} />
-        </View>
-      )}
-      {!isLoading && (
-        <View style={{ flex: 1 }}>
+      <View style={{ paddingHorizontal: 22 }}>
+        <InputSearch
+          value={search}
+          styleComponent={{}}
+          showSwitch={false}
+          onChangeText={text => setSearch(text)}
+          placeholder={"Find all games"}
+        />
+      </View>
+      <View style={{ flex: 1, marginTop: 12 }}>
+        {!isLoading && (
           <Animated.FlatList
             onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }])}
             data={games}
             showsVerticalScrollIndicator={false}
             renderItem={renderGameItem}
             onEndReachedThreshold={0.01}
-            numColumns={3}
+            style={{ flex: 1 }}
+            scrollEnabled
             onEndReached={() => onEndReached()}
-            contentContainerStyle={{ paddingHorizontal: 22, paddingTop: 10 }}
+            contentContainerStyle={{ paddingHorizontal: 22 }}
           />
-        </View>
-      )}
+        )}
+      </View>
     </View>
   );
 };
 
-export default GameFeels;
+export default SearchGame;

@@ -83,11 +83,19 @@ export const genresThemesSorted = JSON.parse(JSON.stringify(genresThemesInfo)).s
 export const defaultSortItem = { id: "0", type: "all", name: "All genres" };
 
 export const gameStatusColors = {
-  WANT_TO_PLAY: "#3DBCE4",
-  PLAYING: "#2EDBB7",
-  BEATEN: "#7346FD",
-  COMPLETED: "#BD04B2",
-  ABANDONED: "#FF1213",
+  WANT_TO_PLAY: "#59BCDB",
+  PLAYING: "#1BC09D",
+  BEATEN: "#8363FF",
+  COMPLETED: "#CC0BA7",
+  ABANDONED: "#B91314",
+};
+
+export const getStatusLabel = {
+  WANT_TO_PLAY: "Want to play",
+  PLAYING: "Started playing",
+  BEATEN: "Game beaten",
+  COMPLETED: "Game completed",
+  ABANDONED: "Abandoned",
 };
 
 export const getGameStatusSource = {

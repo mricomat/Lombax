@@ -23,3 +23,7 @@ export const getFollows = (id: string, offset: number) => {
 export const getFollowers = (id: string, offset: number) => {
   return get("/followers", { id, offset });
 };
+
+export const getDiary = (id: string, offset: number) => {
+  return get("/user/diary", { id, offset });
+};

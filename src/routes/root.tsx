@@ -17,7 +17,12 @@ import GameStatusScreen from "src/screens/gameStatus";
 import UserProfileScreen from "src/screens/userProfile";
 import ReviewsListScreen from "src/screens/reviews/reviewsList";
 import GameFeelsScreen from "src/screens/gameFeels";
+import DiaryListScreen from "src/screens/diaryList";
+import ListsScreen from "src/screens/lists";
+import NewListScreen from "src/screens/lists/newList";
 import FollowsListScreen from "src/screens/followsList";
+import SearchGameScreen from "src/screens/searchGame";
+import GameSelectedList from "src/screens/lists/gamesLists";
 import storange from "src/utils/storange";
 import { langType } from "src/types/context";
 import { IUser } from "src/types/api";
@@ -97,6 +102,11 @@ const App = () => {
         <RootStack.Screen name={routeNames.ReviewsList} component={ReviewsListScreen} options={DefaultOptions} />
         <RootStack.Screen name={routeNames.GameFeels} component={GameFeelsScreen} options={DefaultOptions} />
         <RootStack.Screen name={routeNames.FollowsList} component={FollowsListScreen} options={DefaultOptions} />
+        <RootStack.Screen name={routeNames.Lists} component={ListsScreen} options={DefaultOptions} />
+        <RootStack.Screen name={routeNames.NewList} component={NewListScreen} options={DefaultOptions} />
+        <RootStack.Screen name={routeNames.GameSelectedList} component={GameSelectedList} options={DefaultOptions} />
+        <RootStack.Screen name={routeNames.DiaryList} component={DiaryListScreen} options={DefaultOptions} />
+        <RootStack.Screen name={routeNames.SearchGame} component={SearchGameScreen} options={DefaultOptions} />
       </RootStack.Navigator>
     </RootContext.Provider>
   );

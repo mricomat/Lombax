@@ -220,7 +220,10 @@ const ProfileScreen: () => JSX.Element = () => {
   const renderBottomBar = () => {
     return (
       <View style={styles.infoBar}>
-        <TouchableOpacity style={styles.touchableInfo}>
+        <TouchableOpacity
+          style={styles.touchableInfo}
+          onPress={() => (user.followers.length !== 0 ? navigation.navigate(routeNames.DiaryList, { user }) : {})}
+        >
           <Text style={styles.titleTab}>Diary</Text>
           <Text style={styles.numberTab}>{(user.counts && user.counts.diaryCounts) || 0}</Text>
         </TouchableOpacity>
@@ -228,11 +231,11 @@ const ProfileScreen: () => JSX.Element = () => {
           <Text style={styles.titleTab}>Likes</Text>
           <Text style={styles.numberTab}>{(user.counts && user.counts.likesCount) || 0}</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.touchableInfo}>
+        <TouchableOpacity style={styles.touchableInfo} onPress={() => navigation.navigate(routeNames.Lists, { user })}>
           <Text style={styles.titleTab}>Playlists</Text>
           <Text style={styles.numberTab}>0</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.touchableInfo}>
+        <TouchableOpacity style={styles.touchableInfo} onPress={() => navigation.navigate(routeNames.Lists, { user })}>
           <Text style={styles.titleTab}>Lists</Text>
           <Text style={styles.numberTab}>0</Text>
         </TouchableOpacity>

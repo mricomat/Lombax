@@ -1,6 +1,15 @@
 import moment from "moment";
 import React, { useState, useEffect } from "react";
-import { Animated, Image, KeyboardAvoidingView, ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+  Animated,
+  Image,
+  KeyboardAvoidingView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+} from "react-native";
 import lodash from "lodash";
 
 import { dimensions, fontStyle } from "src/assets";
@@ -12,14 +21,18 @@ import Input from "src/components/inputs/simple";
 import CalendarModal from "src/components/modals/calendar";
 import TapRating from "src/components/tabRating";
 import { useForm } from "src/hooks/use-form";
-import useNavigation from "src/hooks/use-navigation";
-import IGame from "src/types/api";
+import useNavigation, { routeNames } from "src/hooks/use-navigation";
+import IGame, { GameStatus } from "src/types/api";
 import { defReview } from "src/utils/defForm";
 import DeviceUtils from "src/utils/device";
 import { getImageUrl } from "src/utils/image";
 import { ReviewValidation } from "src/utils/validation";
 import { postReview } from "src/services/reviews";
 import useRootContext from "src/hooks/use-context";
+import AbandonedImg from "src/assets/icons/abandoned.svg";
+import BeatenImg from "src/assets/icons/beaten.svg";
+import CompletedImg from "src/assets/icons/completed.svg";
+import { GameStatus as GameTypes } from "src/types/api";
 
 const styles = StyleSheet.create({
   component: {
@@ -64,6 +77,36 @@ const styles = StyleSheet.create({
     ...fontStyle.titleMed,
     color: colors.grey60,
   },
+  selectedBack: {
+    width: 62,
+    height: 62,
+    backgroundColor: colors.disabled,
+    opacity: 0.15,
+    position: "absolute",
+    borderRadius: 100,
+    alignSelf: "center",
+  },
+  itemTitle: {
+    ...fontStyle.titleMed,
+    color: colors.white,
+    alignSelf: "center",
+    marginTop: 15,
+  },
+  adviceTitle: {
+    ...fontStyle.titleMed,
+    color: colors.grey30,
+    alignSelf: "center",
+    textAlign: "center",
+    marginTop: 18,
+    paddingHorizontal: 10,
+  },
+  statesContainer: {
+    flexDirection: "row",
+    marginTop: 35,
+    justifyContent: "space-between",
+    alignSelf: "center",
+    width: "75%",
+  },
 });
 
 const NewReviewScreen: React.FC<any> = ({ route }) => {
@@ -76,6 +119,8 @@ const NewReviewScreen: React.FC<any> = ({ route }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [showCalendarModal, setShowCalendarModal] = useState(false);
   const [rating, setRating] = useState((route.params && route.params.rating) || 0);
+  const [gameFeel, setGameFeel] = useState(route.params && route.params.gameFeel);
+  const [selected, setSelected] = useState(GameStatus.Beaten);
 
   const navigation = useNavigation();
   const scrollY = new Animated.Value(0);
@@ -105,18 +150,44 @@ const NewReviewScreen: React.FC<any> = ({ route }) => {
           dateFinished: moment(values.date).unix(),
           timeToBeat: values.timeToBeat,
         },
+        selected,
         true
       );
       if (!result.error) {
-        // TODO set all info inside app
         const review = result.data.review;
         const diary = result.data.diary;
+        const gameFeelRes = result.data.gameFeel;
+
+        let newDiaries = [{ ...diary, gameFeel: gameFeelRes, review }, ...user.diary];
+        let gamesCount = user.counts.gamesCount;
+
         route.params.setRatingReview(review);
+        route.params.setGameFeel(gameFeelRes);
+
+        let newGameFeels = [...user.gameFeels];
+
+        if (gameFeel) {
+          // remove gameFeel user
+          const index = user.gameFeels.indexOf(gameFeelRes._id);
+          if (index > -1) {
+            newGameFeels.splice(index, 1);
+          }
+        } else {
+          gamesCount = gamesCount + 1;
+        }
+
+        newGameFeels = [gameFeelRes, ...newGameFeels];
+
         setUser({
           ...user,
-          diary: [{ ...diary, review: review }, ...user.diary],
+          diary: [...newDiaries],
           reviews: [diary.review, ...user.reviews],
-          counts: { ...user.counts, reviewsCount: user.counts.reviewsCount + 1 },
+          gameFeels: [...newGameFeels],
+          counts: {
+            ...user.counts,
+            reviewsCount: user.counts.reviewsCount + 1,
+            diaryCounts: user.counts.diaryCounts + 1,
+          },
         });
 
         navigation.goBack();
@@ -124,6 +195,13 @@ const NewReviewScreen: React.FC<any> = ({ route }) => {
       setIsLoading(false);
     }
   );
+
+  useEffect(() => {
+    const gameFeel = route.params && route.params.gameFeel;
+    if (gameFeel && (gameFeel.gameStatus !== GameStatus.Playing || gameFeel.gameStatus !== GameStatus.WantPlay)) {
+      setSelected(gameFeel.gameStatus);
+    }
+  }, []);
 
   useEffect(() => {
     Object.keys(errors).some(k => {
@@ -242,6 +320,39 @@ const NewReviewScreen: React.FC<any> = ({ route }) => {
     );
   };
 
+  const renderStates = () => {
+    return (
+      <>
+        <View style={styles.statesContainer}>
+          <TouchableOpacity style={{}} onPress={() => setSelected(GameTypes.Beaten)}>
+            <View style={{ justifyContent: "center", alignItems: "center" }}>
+              {selected === GameTypes.Beaten && <View style={styles.selectedBack} />}
+              <BeatenImg width={48} height={42} />
+            </View>
+            <Text style={styles.itemTitle}>Beaten</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={{}} onPress={() => setSelected(GameTypes.Completed)}>
+            <View style={{ justifyContent: "center", alignItems: "center" }}>
+              {selected === GameTypes.Completed && <View style={styles.selectedBack} />}
+              <CompletedImg width={45} height={43} />
+            </View>
+            <Text style={styles.itemTitle}>Completed</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={{}} onPress={() => setSelected(GameTypes.Abandoned)}>
+            <View style={{ justifyContent: "center", alignItems: "center", marginTop: -10 }}>
+              {selected === GameTypes.Abandoned && <View style={styles.selectedBack} />}
+              <AbandonedImg width={43} height={49} style={{ marginTop: 4 }} />
+            </View>
+            <Text style={styles.itemTitle}>Abandoned</Text>
+          </TouchableOpacity>
+        </View>
+        <Text style={styles.adviceTitle}>
+          For the best experience we recomend have played at least 8 hours before review a current Game
+        </Text>
+      </>
+    );
+  };
+
   return (
     <View style={styles.component}>
       {renderHeader()}
@@ -252,8 +363,9 @@ const NewReviewScreen: React.FC<any> = ({ route }) => {
             {renderCover()}
           </View>
           <View style={{ paddingHorizontal: 22, flex: 1 }}>
+            {renderStates()}
             <Input
-              styleContent={{ marginTop: 20 }}
+              styleContent={{ marginTop: 25 }}
               value={values.review}
               onChangeText={review => updateForm({ review })}
               placeholder={"Add Review *"}
